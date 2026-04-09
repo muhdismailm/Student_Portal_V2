@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institution Portal | Student</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/student.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="student-navbar">
+        <a href="#" class="brand-logo">EduPulse<span style="color: var(--primary-green);">.</span></a>
+        
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="studentName" style="font-weight: 500; color: var(--text-muted);">Student</span>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="student-container">
+        
+        <div class="welcome-banner">
+            <h1 id="welcomeGreeting">Welcome back!</h1>
+            <p>View your latest academic progress and performance metrics below.</p>
+            
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+        </div>
+
+        <div class="content-card">
+            <h2 class="card-title">Academic Results</h2>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Date Posted</th>
+                            <th>Pass Mark</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTable">
+                        <!-- Dynamic Results go here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="noResults" style="display: none; text-align: center; padding: 2rem; color: var(--text-muted);">
+                <span style="font-size: 2rem;">📚</span>
+                <p style="margin-top: 1rem;">No academic records found for your account.</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/student.js"></script>
+</body>
+</html>

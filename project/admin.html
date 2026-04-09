@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institution Portal | Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>EduPulse<span style="color: var(--primary-green);">.</span></h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" onclick="showSection('overviewSection', this)">
+                    Dashboard
+                </button>
+                <button class="nav-item" onclick="showSection('addStudent', this)">
+                    Add Student
+                </button>
+                <button class="nav-item" onclick="showSection('manageStudents', this); loadStudents();">
+                    Manage Students
+                </button>
+                <button class="nav-item" onclick="showSection('uploadMarks', this); loadStudentDropdown();">
+                    Upload Marks
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="nav-item" style="color: #EF4444;" onclick="logout()">
+                    Log Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <header class="top-header">
+                <div class="user-profile">
+                    <span id="adminName">Administrator</span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                
+                <!-- Overview -->
+                <section id="overviewSection" class="section active">
+                    <div class="section-header">
+                        <h2>Admin Dashboard</h2>
+                        <p>Welcome to the central management portal.</p>
+                    </div>
+                    
+                    <div class="card" style="max-width: 100%;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="color: var(--text-muted); font-size: 0.875rem;">Total Students</h4>
+                                <div id="statStudents" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-blue); margin-top: 0.5rem;">0</div>
+                            </div>
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <h4 style="color: var(--text-muted); font-size: 0.875rem;">Marks Uploaded</h4>
+                                <div id="statMarks" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-green); margin-top: 0.5rem;">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Add Student -->
+                <section id="addStudent" class="section">
+                    <div class="section-header">
+                        <h2>Onboard Student</h2>
+                        <p>Create a new student credential for the system.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="form-group">
+                            <label for="sname">Full Name</label>
+                            <input type="text" id="sname" placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="semail">Email Address</label>
+                            <input type="email" id="semail" placeholder="student@university.edu">
+                        </div>
+                        <div class="form-group">
+                            <label for="smobile">Mobile Number</label>
+                            <input type="text" id="smobile" placeholder="+1 234 567 8900">
+                        </div>
+                        <div class="form-group">
+                            <label for="spassword">Initial Password</label>
+                            <input type="password" id="spassword" placeholder="••••••••">
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="addStudent()">Create Student</button>
+                    </div>
+                </section>
+
+                <!-- Manage Students -->
+                <section id="manageStudents" class="section">
+                    <div class="section-header">
+                        <h2>Manage Students</h2>
+                        <p>View and edit student profiles and contact information.</p>
+                    </div>
+                    
+                    <div class="card" style="max-width: 100%;">
+                        <div class="table-container" style="margin-top: 0;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Mobile Number</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentsTableBody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Upload Marks -->
+                <section id="uploadMarks" class="section">
+                    <div class="section-header">
+                        <h2>Upload Marks</h2>
+                        <p>Assign grades to students for their corresponding subjects.</p>
+                    </div>
+                    
+                    <div class="card" style="max-width: 100%;">
+                        <div class="form-group" style="max-width: 400px;">
+                            <label for="studentSelect">Select Student</label>
+                            <select id="studentSelect" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter'; background: white;">
+                                <option value="">-- Choose a Student --</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; margin-top: 2rem;">
+                            <h3 style="font-size: 1.125rem;">Subjects & Marks</h3>
+                            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="addSubjectRow()">+ Add Subject</button>
+                        </div>
+
+                        <div id="subjectsContainer">
+                            <!-- Dynamic rows injected here -->
+                        </div>
+                        
+                        <button class="btn btn-success btn-block" style="margin-top: 2rem;" onclick="uploadMarks()">Submit All Records</button>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editModalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Student Profile</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="editName">Full Name</label>
+                <input type="text" id="editName">
+                <input type="hidden" id="editOriginalName">
+            </div>
+            <div class="form-group">
+                <label for="editEmail">Email Address</label>
+                <input type="email" id="editEmail">
+            </div>
+            <div class="form-group">
+                <label for="editMobile">Mobile Number</label>
+                <input type="text" id="editMobile">
+            </div>
+            <button class="btn btn-primary btn-block" onclick="saveStudentChanges()">Save Changes</button>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

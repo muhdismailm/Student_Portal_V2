@@ -1,0 +1,93 @@
+/* Student Layout */
+
+body {
+    background-color: var(--bg-light);
+}
+
+.student-navbar {
+    background: white;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand-logo {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.student-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.welcome-banner {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, rgba(37, 99, 235, 0.8) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-banner h1 {
+    color: white;
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-banner p {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+.floating-shape {
+    position: absolute;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    top: -50px;
+    right: -50px;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    bottom: -50px;
+    right: 100px;
+}
+
+.content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}

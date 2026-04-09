@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institution Portal | Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="login-page">
+        <!-- Left Side: Brand/Hero Image -->
+        <div class="login-left">
+            <div class="login-bg" style="background-image: url('assets/images/hero_bg.png');"></div>
+            <div class="login-brand-overlay"></div>
+            <div class="login-brand-content glass-panel" style="padding: 2.5rem;">
+                <h1>EduPulse</h1>
+                <p>Empowering the next generation of leaders. Sign in to access your dashboard, connect with peers, and
+                    manage your academic journey.</p>
+            </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="login-right">
+            <div class="login-card glass-panel" style="background: #fff; box-shadow: var(--shadow-lg); border: none;">
+                <div class="login-card-header">
+                    <h2>Welcome Back</h2>
+                    <p>Please enter your details to sign in.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="admin@gmail.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                </div>
+
+                <button onclick="login()" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container for dynamic Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+
+</html>
