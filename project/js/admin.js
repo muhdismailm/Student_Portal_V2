@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updateDashboardStats();
+    loadStudents();
 });
 
 function updateDashboardStats() {
@@ -44,6 +45,12 @@ function addStudent() {
     let email = document.getElementById("semail").value.trim();
     let mobile = document.getElementById("smobile").value.trim();
     let password = document.getElementById("spassword").value.trim();
+    let session = document.getElementById("ssession").value.trim();
+    let gender = document.getElementById("sgender").value;
+    let dob = document.getElementById("sdob").value;
+    let sclass = document.getElementById("sclass").value.trim();
+    let section = document.getElementById("ssection").value.trim();
+    let guardian = document.getElementById("sguardian").value.trim();
 
     if (!name || !email || !password) {
         if(typeof showToast === 'function') showToast("Please fill all required fields.", "error");
@@ -57,7 +64,10 @@ function addStudent() {
         return;
     }
 
-    users.push({ name, email, mobile, password, role: "student" });
+    users.push({ 
+        name, email, mobile, password, role: "student",
+        session, gender, dob, class: sclass, section, guardian, status: "Active" 
+    });
     localStorage.setItem("users", JSON.stringify(users));
 
     if(typeof showToast === 'function') showToast("Student registered successfully!", "success");
@@ -67,8 +77,25 @@ function addStudent() {
     document.getElementById("semail").value = '';
     document.getElementById("smobile").value = '';
     document.getElementById("spassword").value = '';
+    document.getElementById("ssession").value = '';
+    document.getElementById("sdob").value = '';
+    document.getElementById("sclass").value = '';
+    document.getElementById("ssection").value = '';
+    document.getElementById("sguardian").value = '';
 
     updateDashboardStats();
+    loadStudents();
+    closeAddStudentModal();
+}
+
+function openAddStudentModal() {
+    let modal = document.getElementById("addStudentModalOverlay");
+    if(modal) modal.classList.add("active");
+}
+
+function closeAddStudentModal() {
+    let modal = document.getElementById("addStudentModalOverlay");
+    if(modal) modal.classList.remove("active");
 }
 
 function loadStudentDropdown() {
@@ -180,14 +207,26 @@ function loadStudents() {
 
     tBody.innerHTML = "";
 
-    students.forEach(s => {
+    students.forEach((s, index) => {
+        let isInactive = s.status === 'Inactive';
+        let statusBadge = isInactive ? '<span class="badge" style="background:#FEE2E2;color:#DC2626;">Inactive</span>' : '<span class="badge badge-green">Active</span>';
+        
         let row = `<tr>
+            <td style="font-weight: 500;">${index + 1}</td>
             <td style="font-weight: 500; color: var(--text-main);">${s.name || "N/A"}</td>
-            <td style="color: var(--text-muted);">${s.email}</td>
+            <td>${s.session || "N/A"}</td>
+            <td>${s.gender || "Male"}</td>
+            <td>${s.dob || "N/A"}</td>
+            <td>${s.class || "N/A"}</td>
+            <td>${s.section || "N/A"}</td>
+            <td>${s.guardian || "N/A"}</td>
+            <td>${s.email}</td>
             <td>${s.mobile || "N/A"}</td>
-            <td><span class="badge badge-blue">${s.role}</span></td>
-            <td>
-                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="editStudent('${s.name}')">Edit</button>
+            <td>${statusBadge}</td>
+            <td style="white-space: nowrap;">
+                <button class="btn-icon" title="View" onclick="editStudent('${s.name}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                <button class="btn-icon" title="Delete" onclick="deleteStudent('${s.name}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                <button class="btn-icon" title="Edit" onclick="editStudent('${s.name}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button>
             </td>
         </tr>`;
         tBody.innerHTML += row;
@@ -204,6 +243,13 @@ function editStudent(studentName) {
     document.getElementById("editOriginalName").value = user.name || "";
     document.getElementById("editEmail").value = user.email || "";
     document.getElementById("editMobile").value = user.mobile || "";
+    document.getElementById("editSession").value = user.session || "";
+    document.getElementById("editGender").value = user.gender || "Male";
+    document.getElementById("editDob").value = user.dob || "";
+    document.getElementById("editClass").value = user.class || "";
+    document.getElementById("editSection").value = user.section || "";
+    document.getElementById("editGuardian").value = user.guardian || "";
+    document.getElementById("editStatus").value = user.status || "Active";
 
     document.getElementById("editModalOverlay").classList.add("active");
 }
@@ -217,6 +263,13 @@ function saveStudentChanges() {
     let newEmail = document.getElementById("editEmail").value.trim();
     let newName = document.getElementById("editName").value.trim();
     let newMobile = document.getElementById("editMobile").value.trim();
+    let newSession = document.getElementById("editSession").value.trim();
+    let newGender = document.getElementById("editGender").value;
+    let newDob = document.getElementById("editDob").value;
+    let newClass = document.getElementById("editClass").value.trim();
+    let newSection = document.getElementById("editSection").value.trim();
+    let newGuardian = document.getElementById("editGuardian").value.trim();
+    let newStatus = document.getElementById("editStatus").value;
 
     if (!newName || !newEmail) {
         if(typeof showToast === 'function') showToast("Name and Email cannot be empty.", "error");
@@ -237,6 +290,13 @@ function saveStudentChanges() {
         users[index].name = newName;
         users[index].email = newEmail;
         users[index].mobile = newMobile;
+        users[index].session = newSession;
+        users[index].gender = newGender;
+        users[index].dob = newDob;
+        users[index].class = newClass;
+        users[index].section = newSection;
+        users[index].guardian = newGuardian;
+        users[index].status = newStatus;
         localStorage.setItem("users", JSON.stringify(users));
 
         // Cascade name update to results
@@ -252,4 +312,170 @@ function saveStudentChanges() {
         closeEditModal();
         loadStudents(); // Refresh the table
     }
+}
+
+function deleteStudent(studentName) {
+    if (!confirm(`Are you sure you want to delete student '${studentName}'? This action cannot be undone.`)) return;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let initialLength = users.length;
+    users = users.filter(u => !(u.name === studentName && u.role === "student"));
+
+    if (users.length < initialLength) {
+        localStorage.setItem("users", JSON.stringify(users));
+
+        // Cascade delete into results
+        let results = JSON.parse(localStorage.getItem("results")) || [];
+        let initialResultsLength = results.length;
+        results = results.filter(r => r.name !== studentName);
+        if (results.length < initialResultsLength) {
+            localStorage.setItem("results", JSON.stringify(results));
+        }
+
+        if(typeof showToast === 'function') showToast("Student deleted successfully.", "success");
+        loadStudents();
+        updateDashboardStats();
+    }
+}
+
+// --- Student Academic Profiles Logic ---
+
+function loadStudentProfilesList() {
+    document.getElementById("profilesListPane").style.display = "block";
+    document.getElementById("profileDetailPane").style.display = "none";
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let students = users.filter(u => u.role === "student");
+    let tbody = document.getElementById("profilesListBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    students.forEach((s, i) => {
+        let row = `<tr>
+            <td style="font-weight: 500;">${i + 1}</td>
+            <td style="font-weight: 500; color: var(--text-main);">${s.name}</td>
+            <td>${s.class || "Not Assigned"}</td>
+            <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="viewAcademicProfile('${s.name}')">View Details</button>
+            </td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+function goBackToProfiles() {
+    document.getElementById("profilesListPane").style.display = "block";
+    document.getElementById("profileDetailPane").style.display = "none";
+}
+
+let currentlyViewingAcademicStudent = "";
+
+function viewAcademicProfile(studentName) {
+    currentlyViewingAcademicStudent = studentName;
+    document.getElementById("profilesListPane").style.display = "none";
+    document.getElementById("profileDetailPane").style.display = "block";
+    document.getElementById("managedStudentName").innerText = studentName;
+
+    // Load Class
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let user = users.find(u => u.name === studentName && u.role === "student");
+    document.getElementById("academicClassInput").value = user ? (user.class || "") : "";
+
+    // Load Marks
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+    let studentResults = results.filter(r => r.name === studentName);
+    
+    let container = document.getElementById("academicMarksContainer");
+    container.innerHTML = "";
+    
+    if (studentResults.length === 0) {
+        addAcademicSubjectRow();
+    } else {
+        studentResults.forEach(r => {
+            addAcademicSubjectRow(r.subject, r.passMark, r.marks, r.grade);
+        });
+    }
+}
+
+function addAcademicSubjectRow(subject = "", passMark = "", marks = "", grade = "") {
+    let container = document.getElementById("academicMarksContainer");
+    let row = document.createElement("div");
+    row.className = "subject-row";
+    row.style = "display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;";
+
+    row.innerHTML = `
+        <div style="flex: 2;">
+            <input type="text" class="sub-name" placeholder="Subject Name" value="${subject}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
+        </div>
+        <div style="flex: 1;">
+            <input type="number" class="sub-pass" placeholder="Pass Mark" value="${passMark}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
+        </div>
+        <div style="flex: 1;">
+            <input type="number" class="sub-marks" placeholder="Marks" value="${marks}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
+        </div>
+        <div style="flex: 1;">
+            <input type="text" class="sub-grade" placeholder="Grade" value="${grade}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
+        </div>
+        <div>
+            <button class="btn" style="background:#EF4444; color:white; padding: 0.5rem;" onclick="this.parentElement.parentElement.remove()">Remove</button>
+        </div>
+    `;
+    container.appendChild(row);
+}
+
+function saveAcademicProfile() {
+    if (!currentlyViewingAcademicStudent) return;
+
+    let newClass = document.getElementById("academicClassInput").value.trim();
+
+    // 1. Update Class in User Object
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let userIndex = users.findIndex(u => u.name === currentlyViewingAcademicStudent && u.role === "student");
+    if (userIndex !== -1) {
+        users[userIndex].class = newClass;
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    // 2. Overwrite Marks in Results Object
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+    
+    // Wipe old marks for this student
+    results = results.filter(r => r.name !== currentlyViewingAcademicStudent);
+
+    // Harvest new mapped marks
+    let rows = document.querySelectorAll("#academicMarksContainer .subject-row");
+    let hasError = false;
+
+    rows.forEach(row => {
+        let subject = row.querySelector(".sub-name").value.trim();
+        let passMark = row.querySelector(".sub-pass").value.trim();
+        let marks = row.querySelector(".sub-marks").value.trim();
+        let grade = row.querySelector(".sub-grade").value.trim();
+
+        if (subject || passMark || marks || grade) { // Only add if row is not completely empty
+            if (!subject || !passMark || !marks || !grade) {
+                hasError = true;
+            } else {
+                results.push({
+                    name: currentlyViewingAcademicStudent, 
+                    subject, 
+                    passMark, 
+                    marks, 
+                    grade, 
+                    date: new Date().toLocaleDateString()
+                });
+            }
+        }
+    });
+
+    if (hasError) {
+        if(typeof showToast === 'function') showToast("Please completely fill any mark rows you intend to save, or remove them.", "error");
+        return;
+    }
+
+    localStorage.setItem("results", JSON.stringify(results));
+    
+    if(typeof showToast === 'function') showToast("Academic Details Updated", "success");
+    goBackToProfiles();
+    loadStudents(); // refresh dashboard just in case
 }

@@ -18,14 +18,11 @@
             </div>
             
             <nav class="sidebar-nav">
-                <button class="nav-item active" onclick="showSection('overviewSection', this)">
+                <button class="nav-item active" onclick="showSection('overviewSection', this); loadStudents();">
                     Dashboard
                 </button>
-                <button class="nav-item" onclick="showSection('addStudent', this)">
-                    Add Student
-                </button>
-                <button class="nav-item" onclick="showSection('manageStudents', this); loadStudents();">
-                    Manage Students
+                <button class="nav-item" onclick="showSection('studentProfilesSection', this); loadStudentProfilesList();">
+                    Student Profiles
                 </button>
                 <button class="nav-item" onclick="showSection('uploadMarks', this); loadStudentDropdown();">
                     Upload Marks
@@ -43,6 +40,10 @@
         <main class="main-content">
             
             <header class="top-header">
+                <div class="header-search">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" placeholder="Search">
+                </div>
                 <div class="user-profile">
                     <span id="adminName">Administrator</span>
                     <div class="avatar">A</div>
@@ -53,76 +54,103 @@
                 
                 <!-- Overview -->
                 <section id="overviewSection" class="section active">
-                    <div class="section-header">
-                        <h2>Admin Dashboard</h2>
-                        <p>Welcome to the central management portal.</p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h2 style="font-size: 2rem; font-weight: 700; color: #111;">Student Management</h2>
                     </div>
                     
-                    <div class="card" style="max-width: 100%;">
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
-                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                                <h4 style="color: var(--text-muted); font-size: 0.875rem;">Total Students</h4>
-                                <div id="statStudents" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-blue); margin-top: 0.5rem;">0</div>
+                    <div class="filters-container">
+                        <div class="filter-row" style="justify-content: space-between;">
+                            <div class="top-search">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" placeholder="Search">
                             </div>
-                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                                <h4 style="color: var(--text-muted); font-size: 0.875rem;">Marks Uploaded</h4>
-                                <div id="statMarks" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-green); margin-top: 0.5rem;">0</div>
+                            
+                            <div style="display: flex; gap: 1rem;">
+                                <button class="btn btn-light">Download Report</button>
+                                <button class="btn btn-yellow" onclick="openAddStudentModal()">+ Add Student</button>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto;">
+                        <table style="min-width: 1200px;">
+                            <thead>
+                                <tr>
+                                    <th>S.No.</th>
+                                    <th>Student Name</th>
+                                    <th>Session Name</th>
+                                    <th>Gender</th>
+                                    <th>DOB</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>Guardian Name</th>
+                                    <th>Student Email</th>
+                                    <th>Guardian Mobile No</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
-                <!-- Add Student -->
-                <section id="addStudent" class="section">
-                    <div class="section-header">
-                        <h2>Onboard Student</h2>
-                        <p>Create a new student credential for the system.</p>
+                <!-- Student Profiles (Academic View) -->
+                <section id="studentProfilesSection" class="section">
+                    <!-- List Pane -->
+                    <div id="profilesListPane">
+                        <div class="section-header">
+                            <h2>Academic Profiles</h2>
+                            <p>Select a student to edit class assignments and academic marks.</p>
+                        </div>
+                        <div class="card" style="max-width: 100%;">
+                            <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>S.No.</th>
+                                            <th>Student Name</th>
+                                            <th>Class</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="profilesListBody">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="card">
-                        <div class="form-group">
-                            <label for="sname">Full Name</label>
-                            <input type="text" id="sname" placeholder="John Doe">
-                        </div>
-                        <div class="form-group">
-                            <label for="semail">Email Address</label>
-                            <input type="email" id="semail" placeholder="student@university.edu">
-                        </div>
-                        <div class="form-group">
-                            <label for="smobile">Mobile Number</label>
-                            <input type="text" id="smobile" placeholder="+1 234 567 8900">
-                        </div>
-                        <div class="form-group">
-                            <label for="spassword">Initial Password</label>
-                            <input type="password" id="spassword" placeholder="••••••••">
-                        </div>
-                        <button class="btn btn-primary btn-block" onclick="addStudent()">Create Student</button>
-                    </div>
-                </section>
 
-                <!-- Manage Students -->
-                <section id="manageStudents" class="section">
-                    <div class="section-header">
-                        <h2>Manage Students</h2>
-                        <p>View and edit student profiles and contact information.</p>
-                    </div>
-                    
-                    <div class="card" style="max-width: 100%;">
-                        <div class="table-container" style="margin-top: 0;">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Mobile Number</th>
-                                        <th>Role</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="studentsTableBody">
-                                    <!-- Populated dynamically -->
-                                </tbody>
-                            </table>
+                    <!-- Details Pane -->
+                    <div id="profileDetailPane" style="display: none;">
+                        <button class="btn btn-light" style="margin-bottom: 1.5rem;" onclick="goBackToProfiles()">← Back to Profiles</button>
+                        <div class="section-header">
+                            <h2>Managing: <span id="managedStudentName" style="color: var(--primary-blue);"></span></h2>
+                            <p>Edit student's class explicitly and modify existing academic records.</p>
+                        </div>
+
+                        <div class="card" style="max-width: 100%;">
+                            <div class="form-group" style="max-width: 300px;">
+                                <label for="academicClassInput">Current Class</label>
+                                <input type="text" id="academicClassInput" placeholder="e.g. 12th">
+                            </div>
+
+                            <hr style="border: 0; height: 1px; background: var(--border-color); margin: 2rem 0;">
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="font-size: 1.125rem;">Student Marks</h3>
+                                <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="addAcademicSubjectRow()">+ Add Mark Row</button>
+                            </div>
+
+                            <div id="academicMarksContainer">
+                                <!-- Dynamic rows -->
+                            </div>
+
+                            <button class="btn btn-success btn-block" style="margin-top: 2rem;" onclick="saveAcademicProfile()">Save Academic Details</button>
                         </div>
                     </div>
                 </section>
@@ -159,27 +187,119 @@
         </main>
     </div>
 
+    <!-- Add Student Modal -->
+    <div class="modal-overlay" id="addStudentModalOverlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Add New Student</h3>
+                <button class="close-btn" onclick="closeAddStudentModal()">&times;</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="sname">Full Name</label>
+                    <input type="text" id="sname" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="semail">Student Email</label>
+                    <input type="email" id="semail" placeholder="student@university.edu">
+                </div>
+                <div class="form-group">
+                    <label for="ssession">Session Name</label>
+                    <input type="text" id="ssession" placeholder="2023-2024">
+                </div>
+                <div class="form-group">
+                    <label for="sgender">Gender</label>
+                    <select id="sgender" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sdob">DOB</label>
+                    <input type="date" id="sdob" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                </div>
+                <div class="form-group">
+                    <label for="sclass">Class</label>
+                    <input type="text" id="sclass" placeholder="12th">
+                </div>
+                <div class="form-group">
+                    <label for="ssection">Section</label>
+                    <input type="text" id="ssection" placeholder="A">
+                </div>
+                <div class="form-group">
+                    <label for="sguardian">Guardian Name</label>
+                    <input type="text" id="sguardian" placeholder="KL Kumar">
+                </div>
+                <div class="form-group">
+                    <label for="smobile">Guardian Mobile No</label>
+                    <input type="text" id="smobile" placeholder="+1 234 567 8900">
+                </div>
+                <div class="form-group">
+                    <label for="spassword">Password</label>
+                    <input type="password" id="spassword" placeholder="••••••••">
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="addStudent()">Create Student</button>
+        </div>
+    </div>
+
     <!-- Edit Profile Modal -->
     <div class="modal-overlay" id="editModalOverlay">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h3>Edit Student Profile</h3>
                 <button class="close-btn" onclick="closeEditModal()">&times;</button>
             </div>
-            <div class="form-group">
-                <label for="editName">Full Name</label>
-                <input type="text" id="editName">
-                <input type="hidden" id="editOriginalName">
+            <input type="hidden" id="editOriginalName">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="editName">Full Name</label>
+                    <input type="text" id="editName">
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Student Email</label>
+                    <input type="email" id="editEmail">
+                </div>
+                <div class="form-group">
+                    <label for="editSession">Session Name</label>
+                    <input type="text" id="editSession">
+                </div>
+                <div class="form-group">
+                    <label for="editGender">Gender</label>
+                    <select id="editGender" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDob">DOB</label>
+                    <input type="date" id="editDob" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                </div>
+                <div class="form-group">
+                    <label for="editClass">Class</label>
+                    <input type="text" id="editClass">
+                </div>
+                <div class="form-group">
+                    <label for="editSection">Section</label>
+                    <input type="text" id="editSection">
+                </div>
+                <div class="form-group">
+                    <label for="editGuardian">Guardian Name</label>
+                    <input type="text" id="editGuardian">
+                </div>
+                <div class="form-group">
+                    <label for="editMobile">Guardian Mobile No</label>
+                    <input type="text" id="editMobile">
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">Status</label>
+                    <select id="editStatus" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="editEmail">Email Address</label>
-                <input type="email" id="editEmail">
-            </div>
-            <div class="form-group">
-                <label for="editMobile">Mobile Number</label>
-                <input type="text" id="editMobile">
-            </div>
-            <button class="btn btn-primary btn-block" onclick="saveStudentChanges()">Save Changes</button>
+            <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="saveStudentChanges()">Save Changes</button>
         </div>
     </div>
 
