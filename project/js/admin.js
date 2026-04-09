@@ -44,7 +44,6 @@ function addStudent() {
     let name = document.getElementById("sname").value.trim();
     let email = document.getElementById("semail").value.trim();
     let mobile = document.getElementById("smobile").value.trim();
-    let password = document.getElementById("spassword").value.trim();
     let session = document.getElementById("ssession").value.trim();
     let gender = document.getElementById("sgender").value;
     let dob = document.getElementById("sdob").value;
@@ -52,14 +51,16 @@ function addStudent() {
     let section = document.getElementById("ssection").value.trim();
     let guardian = document.getElementById("sguardian").value.trim();
 
-    if (!name || !email || !password) {
-        if(typeof showToast === 'function') showToast("Please fill all required fields.", "error");
+    if (!name || !email || !dob) {
+        if(typeof showToast === 'function') showToast("Please fill all required fields, including Date of Birth.", "error");
         return;
     }
 
+    let password = formatDobToPassword(dob);
+
     let users = JSON.parse(localStorage.getItem("users")) || [];
     
-    if (users.find(u => u.name.toLowerCase() === name.toLowerCase())) {
+    if (users.find(u => (u.name || "").toLowerCase() === name.toLowerCase())) {
         if(typeof showToast === 'function') showToast("Student Name already exists.", "error");
         return;
     }
@@ -76,7 +77,6 @@ function addStudent() {
     document.getElementById("sname").value = '';
     document.getElementById("semail").value = '';
     document.getElementById("smobile").value = '';
-    document.getElementById("spassword").value = '';
     document.getElementById("ssession").value = '';
     document.getElementById("sdob").value = '';
     document.getElementById("sclass").value = '';
@@ -494,16 +494,17 @@ function saveAcademicProfile() {
     loadStudents(); // refresh dashboard just in case
 }
 
+function formatDobToPassword(dateStr) {
+    if (!dateStr) return "";
+    let parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return parts[2] + parts[1] + parts[0]; // DDMMYYYY
+    }
+    return "";
+}
+
 // Auto-generate password from DOB (DDMMYYYY)
 document.addEventListener("DOMContentLoaded", () => {
-    function formatDobToPassword(dateStr) {
-        if (!dateStr) return "";
-        let parts = dateStr.split('-');
-        if (parts.length === 3) {
-            return parts[2] + parts[1] + parts[0]; // DDMMYYYY
-        }
-        return "";
-    }
 
     let sdob = document.getElementById("sdob");
     let spassinfo = document.getElementById("spassword");

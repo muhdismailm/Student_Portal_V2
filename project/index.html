@@ -11,39 +11,75 @@
 <body>
 
     <div class="login-page">
-        <!-- Left Side: Brand/Hero Image -->
-        <div class="login-left">
-            <div class="login-bg" style="background-image: url('assets/images/hero_bg.png');"></div>
-            <div class="login-brand-overlay"></div>
-            <div class="login-brand-content glass-panel" style="padding: 2.5rem;">
-                <h1>EduPulse</h1>
-                <p>Empowering the next generation of leaders. Sign in to access your dashboard, connect with peers, and
-                    manage your academic journey.</p>
+        <!-- Left Side: Login Form -->
+        <div class="login-right" style="background: white; border: none; align-items: center;">
+            <div class="login-card"
+                style="box-shadow: none; border: none; width: 100%; max-width: 450px; padding: 2rem;">
+                <!-- Brand Headers -->
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#15305b" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+                    </svg>
+                    <div>
+                        <h1
+                            style="font-size: 1.5rem; color: #15305b; margin: 0; font-weight: 800; letter-spacing: 1px;">
+                            ACADEMIA</h1>
+                        <p
+                            style="font-size: 0.70rem; color: #64748b; margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 1.5px;">
+                            School Management System</p>
+                    </div>
+                </div>
+
+                <div class="login-card-header" style="text-align: left; margin-bottom: 2rem;">
+                    <h2 style="color: #15305b; font-size: 1.5rem; font-weight: 700;">Login to your account</h2>
+                </div>
+
+                <div class="form-group" style="position: relative; margin-bottom: 1.5rem;">
+                    <div
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); display:flex; align-items:center; opacity: 0.5;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#15305b" stroke="none">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+                    <input type="text" id="email" placeholder="Register Number"
+                        style="background: #f0f4f8; border: none; padding-left: 3rem; color: #15305b; font-weight: 500;">
+                </div>
+
+                <div class="form-group" style="position: relative; margin-bottom: 1.5rem;">
+                    <div
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); display:flex; align-items:center; opacity: 0.5;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#15305b" stroke="none">
+                            <path
+                                d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                        </svg>
+                    </div>
+                    <input type="password" id="password" placeholder="Password"
+                        style="background: #f0f4f8; border: none; padding-left: 3rem; color: #15305b; font-weight: 500;">
+                </div>
+
+                <div style="text-align: left; margin-bottom: 2rem;">
+                    <a href="#"
+                        style="color: #64748b; font-size: 0.85rem; font-weight: 600; text-decoration: none;">Forget
+                        password?</a>
+                </div>
+
+                <button onclick="login()" class="btn btn-primary"
+                    style="background: #15305b; border-radius: 8px; width: 120px; font-weight: 600;">
+                    Login
+                </button>
             </div>
         </div>
 
-        <!-- Right Side: Login Form -->
-        <div class="login-right">
-            <div class="login-card glass-panel" style="background: #fff; box-shadow: var(--shadow-lg); border: none;">
-                <div class="login-card-header">
-                    <h2>Welcome Back</h2>
-                    <p>Please enter your details to sign in.</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Register Number</label>
-                    <input type="text" id="email" placeholder="e.g. REG12345">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="•••••••• or DDMMYYYY">
-                </div>
-
-                <button onclick="login()" class="btn btn-primary btn-block" style="margin-top: 1rem;">
-                    Sign In
-                </button>
+        <!-- Right Side: Graphic/Hero Image -->
+        <div class="login-left"
+            style="background: #f4f7fb; position: relative; border-radius: 60px 0 0 60px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <div
+                style="position: absolute; top:0;left:0;right:0;bottom:0; background: url('assets/images/hero_bg.png') center/cover; opacity: 0.15; mix-blend-mode: multiply;">
             </div>
+            <img src="C:\Users\Ismail M\.gemini\antigravity\brain\f812c628-6463-42a0-8163-78e9f0e87416\school_login_illustration_1775741811954.png"
+                alt="Hero Illustration" style="max-width: 80%; z-index: 2; object-fit: contain;">
         </div>
     </div>
 
