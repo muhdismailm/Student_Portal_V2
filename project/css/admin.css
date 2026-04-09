@@ -220,6 +220,8 @@ body {
     padding: 2rem;
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.3s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal-header {

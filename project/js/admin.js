@@ -164,6 +164,8 @@ function uploadMarks() {
     let recordsToUpload = [];
     let hasError = false;
 
+    let sem = document.getElementById("markSemesterSelect").value;
+
     rows.forEach(row => {
         let subject = row.querySelector(".sub-name").value.trim();
         let passMark = row.querySelector(".sub-pass").value.trim();
@@ -174,7 +176,7 @@ function uploadMarks() {
             hasError = true;
         } else {
             recordsToUpload.push({
-                name: studentName, subject, passMark, marks, grade, date: new Date().toLocaleDateString()
+                name: studentName, semester: sem, subject, passMark, marks, grade, date: new Date().toLocaleDateString()
             });
         }
     });
@@ -250,6 +252,7 @@ function editStudent(studentName) {
     document.getElementById("editSection").value = user.section || "";
     document.getElementById("editGuardian").value = user.guardian || "";
     document.getElementById("editStatus").value = user.status || "Active";
+    document.getElementById("editPassword").value = user.password || "";
 
     document.getElementById("editModalOverlay").classList.add("active");
 }
@@ -270,6 +273,7 @@ function saveStudentChanges() {
     let newSection = document.getElementById("editSection").value.trim();
     let newGuardian = document.getElementById("editGuardian").value.trim();
     let newStatus = document.getElementById("editStatus").value;
+    let newPassword = document.getElementById("editPassword").value.trim();
 
     if (!newName || !newEmail) {
         if(typeof showToast === 'function') showToast("Name and Email cannot be empty.", "error");
@@ -297,6 +301,7 @@ function saveStudentChanges() {
         users[index].section = newSection;
         users[index].guardian = newGuardian;
         users[index].status = newStatus;
+        users[index].password = newPassword;
         localStorage.setItem("users", JSON.stringify(users));
 
         // Cascade name update to results
@@ -381,9 +386,16 @@ function viewAcademicProfile(studentName) {
     let user = users.find(u => u.name === studentName && u.role === "student");
     document.getElementById("academicClassInput").value = user ? (user.class || "") : "";
 
+    loadAcademicSemesterData();
+}
+
+function loadAcademicSemesterData() {
+    if (!currentlyViewingAcademicStudent) return;
+    let sem = document.getElementById("academicSemesterSelect").value;
+    
     // Load Marks
     let results = JSON.parse(localStorage.getItem("results")) || [];
-    let studentResults = results.filter(r => r.name === studentName);
+    let studentResults = results.filter(r => r.name === currentlyViewingAcademicStudent && (r.semester === sem || (!r.semester && sem === "Semester 1")));
     
     let container = document.getElementById("academicMarksContainer");
     container.innerHTML = "";
@@ -438,9 +450,10 @@ function saveAcademicProfile() {
 
     // 2. Overwrite Marks in Results Object
     let results = JSON.parse(localStorage.getItem("results")) || [];
+    let sem = document.getElementById("academicSemesterSelect").value;
     
-    // Wipe old marks for this student
-    results = results.filter(r => r.name !== currentlyViewingAcademicStudent);
+    // Wipe old marks for this student specifically for the targeted semester
+    results = results.filter(r => !(r.name === currentlyViewingAcademicStudent && (r.semester === sem || (!r.semester && sem === "Semester 1"))));
 
     // Harvest new mapped marks
     let rows = document.querySelectorAll("#academicMarksContainer .subject-row");
@@ -458,6 +471,7 @@ function saveAcademicProfile() {
             } else {
                 results.push({
                     name: currentlyViewingAcademicStudent, 
+                    semester: sem,
                     subject, 
                     passMark, 
                     marks, 
@@ -479,3 +493,36 @@ function saveAcademicProfile() {
     goBackToProfiles();
     loadStudents(); // refresh dashboard just in case
 }
+
+// Auto-generate password from DOB (DDMMYYYY)
+document.addEventListener("DOMContentLoaded", () => {
+    function formatDobToPassword(dateStr) {
+        if (!dateStr) return "";
+        let parts = dateStr.split('-');
+        if (parts.length === 3) {
+            return parts[2] + parts[1] + parts[0]; // DDMMYYYY
+        }
+        return "";
+    }
+
+    let sdob = document.getElementById("sdob");
+    let spassinfo = document.getElementById("spassword");
+    if (sdob && spassinfo) {
+        sdob.addEventListener("change", function() {
+            spassinfo.value = formatDobToPassword(this.value);
+        });
+    }
+
+    let editDob = document.getElementById("editDob");
+    let editPassinfo = document.getElementById("editPassword");
+    if (editDob && editPassinfo) {
+        editDob.addEventListener("change", function() {
+            editPassinfo.value = formatDobToPassword(this.value);
+        });
+    }
+    
+    let academicSem = document.getElementById("academicSemesterSelect");
+    if (academicSem) {
+        academicSem.addEventListener("change", loadAcademicSemesterData);
+    }
+});

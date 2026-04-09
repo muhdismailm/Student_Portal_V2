@@ -25,7 +25,10 @@ function login() {
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    let user = users.find(u => u.email === email && u.password === password);
+    let user = users.find(u => 
+        (u.email === email || (u.role === "student" && u.session === email)) 
+        && u.password === password
+    );
 
     if (!user) {
         if(typeof showToast === 'function') showToast("Invalid credentials provided.", "error");
