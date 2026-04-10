@@ -129,7 +129,7 @@
                             <h3 style="font-size: 1.25rem;">Student Profile</h3>
                             <button class="btn btn-yellow"
                                 onclick="showSection('resultsSection', document.querySelectorAll('.sidebar-nav .nav-item')[1]); loadResultsData();">View
-                                Semester Grade Card</button>
+                                Yearly Grade Card</button>
                         </div>
 
                         <div class="profile-grid">
@@ -178,19 +178,17 @@
                     <div class="section-header"
                         style="display: flex; justify-content: space-between; align-items: flex-end;">
                         <div>
-                            <h2>Semester Grade Card</h2>
+                            <h2>Yearly Grade Card</h2>
                             <p class="print-hide">Official academic records mapping to your subjects.</p>
                         </div>
                         <div style="display: flex; gap: 1rem; align-items: center;" class="print-hide">
-                            <label for="studentSemesterFilter" style="font-weight: 500;">Filter by Semester:</label>
-                            <select id="studentSemesterFilter" onchange="loadResultsData()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); font-family: 'Inter'; width: 200px;">
-                                <option value="All">All Semesters</option>
-                                <option value="Semester 1">Semester 1</option>
-                                <option value="Semester 2">Semester 2</option>
-                                <option value="Semester 3">Semester 3</option>
-                                <option value="Semester 4">Semester 4</option>
-                                <option value="Semester 5">Semester 5</option>
-                                <option value="Semester 6">Semester 6</option>
+                            <label for="studentBatchFilter" style="font-weight: 500;">Filter by Batch:</label>
+                            <select id="studentBatchFilter" onchange="loadResultsData()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); font-family: 'Inter'; width: 200px;">
+                                <option value="All">All Batches</option>
+                                <option value="Batch 1">Batch 1</option>
+                                <option value="Batch 2">Batch 2</option>
+                                <option value="Batch 3">Batch 3</option>
+                                <option value="Batch 4">Batch 4</option>
                             </select>
                         </div>
                         <button class="btn btn-primary print-hide" onclick="window.print()">Download Result Card</button>
@@ -264,6 +262,10 @@
     </div>
 
     <div id="toast-container"></div>
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/student.js"></script>

@@ -24,7 +24,7 @@
                 <button class="nav-item" onclick="showSection('studentProfilesSection', this); loadStudentProfilesList();">
                     Student Profiles
                 </button>
-                <button class="nav-item" onclick="showSection('uploadMarks', this); loadStudentDropdown();">
+                <button class="nav-item" onclick="showSection('uploadMarks', this); loadStudentDropdownByBatch();">
                     Upload Marks
                 </button>
             </nav>
@@ -134,21 +134,12 @@
                         </div>
 
                         <div class="card" style="max-width: 100%;">
-                            <div class="form-group" style="max-width: 300px;">
-                                <label for="academicClassInput">Current Class</label>
-                                <input type="text" id="academicClassInput" placeholder="e.g. 12th">
+                            <!-- Read-only profile details injected here -->
+                            <div id="academicProfileDetails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; background: #f8fafc; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1.5rem;">
+                                <!-- Populated dynamically by admin.js -->
                             </div>
-                            <div class="form-group" style="max-width: 300px;">
-                                <label for="academicSemesterSelect">Target Semester</label>
-                                <select id="academicSemesterSelect" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter'; background: white;">
-                                    <option value="Semester 1">Semester 1</option>
-                                    <option value="Semester 2">Semester 2</option>
-                                    <option value="Semester 3">Semester 3</option>
-                                    <option value="Semester 4">Semester 4</option>
-                                    <option value="Semester 5">Semester 5</option>
-                                    <option value="Semester 6">Semester 6</option>
-                                </select>
-                            </div>
+                            
+
 
                             <hr style="border: 0; height: 1px; background: var(--border-color); margin: 2rem 0;">
 
@@ -157,8 +148,21 @@
                                 <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="addAcademicSubjectRow()">+ Add Mark Row</button>
                             </div>
 
-                            <div id="academicMarksContainer">
-                                <!-- Dynamic rows -->
+                            <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Subject Name</th>
+                                            <th style="width: 120px;">Pass Mark</th>
+                                            <th style="width: 120px;">Obtained</th>
+                                            <th style="width: 120px;">Grade</th>
+                                            <th style="width: 100px;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="academicMarksTableBody">
+                                        <!-- Dynamic rows injected here -->
+                                    </tbody>
+                                </table>
                             </div>
 
                             <button class="btn btn-success btn-block" style="margin-top: 2rem;" onclick="saveAcademicProfile()">Save Academic Details</button>
@@ -175,20 +179,19 @@
                     
                     <div class="card" style="max-width: 100%;">
                         <div class="form-group" style="max-width: 400px;">
-                            <label for="studentSelect">Select Student</label>
-                            <select id="studentSelect" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter'; background: white;">
-                                <option value="">-- Choose a Student --</option>
+                            <label for="markBatchSelect">Select Batch first</label>
+                            <select id="markBatchSelect" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter'; background: white;" onchange="loadStudentDropdownByBatch()">
+                                <option value="">-- Choose a Batch --</option>
+                                <option value="Batch 1">Batch 1</option>
+                                <option value="Batch 2">Batch 2</option>
+                                <option value="Batch 3">Batch 3</option>
+                                <option value="Batch 4">Batch 4</option>
                             </select>
                         </div>
                         <div class="form-group" style="max-width: 400px;">
-                            <label for="markSemesterSelect">Select Semester</label>
-                            <select id="markSemesterSelect" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter'; background: white;">
-                                <option value="Semester 1">Semester 1</option>
-                                <option value="Semester 2">Semester 2</option>
-                                <option value="Semester 3">Semester 3</option>
-                                <option value="Semester 4">Semester 4</option>
-                                <option value="Semester 5">Semester 5</option>
-                                <option value="Semester 6">Semester 6</option>
+                            <label for="studentSelect">Select Student in Batch</label>
+                            <select id="studentSelect" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter'; background: white;">
+                                <option value="">-- Select a Batch First --</option>
                             </select>
                         </div>
                         
@@ -241,8 +244,13 @@
                     <input type="date" id="sdob" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
                 </div>
                 <div class="form-group">
-                    <label for="sclass">Class</label>
-                    <input type="text" id="sclass" placeholder="12th">
+                    <label for="sbatch">Batch</label>
+                    <select id="sbatch" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                        <option value="Batch 1">Batch 1</option>
+                        <option value="Batch 2">Batch 2</option>
+                        <option value="Batch 3">Batch 3</option>
+                        <option value="Batch 4">Batch 4</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="ssection">Section</label>
@@ -294,8 +302,13 @@
                     <input type="date" id="editDob" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
                 </div>
                 <div class="form-group">
-                    <label for="editClass">Class</label>
-                    <input type="text" id="editClass">
+                    <label for="editBatch">Batch</label>
+                    <select id="editBatch" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                        <option value="Batch 1">Batch 1</option>
+                        <option value="Batch 2">Batch 2</option>
+                        <option value="Batch 3">Batch 3</option>
+                        <option value="Batch 4">Batch 4</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="editSection">Section</label>
@@ -326,6 +339,10 @@
     </div>
 
     <div id="toast-container"></div>
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>

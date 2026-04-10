@@ -56,15 +56,15 @@ function loadResultsData() {
     if (!currentUser) return;
 
     let results = JSON.parse(localStorage.getItem("results")) || [];
-    let semFilter = document.getElementById("studentSemesterFilter");
-    let chosenSem = semFilter ? semFilter.value : "All";
+    let batchFilter = document.getElementById("studentBatchFilter");
+    let chosenBatch = batchFilter ? batchFilter.value : "All";
     
     let myResults = results.filter(r => {
         if (r.name !== currentUser.name) return false;
-        if (chosenSem === "All") return true;
-        // Fallback older tracks with no semantic term mapping to Semester 1 by default
-        let rSem = r.semester || "Semester 1"; 
-        return rSem === chosenSem;
+        if (chosenBatch === "All") return true;
+        // Fallback older tracks with no semantic term mapping to Batch 1 by default
+        let rBatch = r.batch || "Batch 1"; 
+        return rBatch === chosenBatch;
     });
     
     let table = document.getElementById("resultTable");
@@ -82,22 +82,22 @@ function loadResultsData() {
 
     table.innerHTML = ""; // Clear existing
 
-    // Sort alphabetically by semester so they group nicely together
+    // Sort alphabetically by batch so they group nicely together
     myResults.sort((a, b) => {
-        let semA = a.semester || "Semester 1";
-        let semB = b.semester || "Semester 1";
-        return semA.localeCompare(semB);
+        let batchA = a.batch || "Batch 1";
+        let batchB = b.batch || "Batch 1";
+        return batchA.localeCompare(batchB);
     });
 
-    let currentRenderedSemester = "";
+    let currentRenderedBatch = "";
 
     myResults.forEach(r => {
-        let rSem = r.semester || "Semester 1";
-        if (chosenSem === "All" && currentRenderedSemester !== rSem) {
-            currentRenderedSemester = rSem;
+        let rBatch = r.batch || "Batch 1";
+        if (chosenBatch === "All" && currentRenderedBatch !== rBatch) {
+            currentRenderedBatch = rBatch;
             let headerRow = `<tr>
                 <td colspan="6" style="background: #f8fafc; font-weight: 600; color: var(--primary-blue); padding: 0.75rem 1rem; border-top: 2px solid var(--border-color); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;">
-                    ${rSem}
+                    ${rBatch}
                 </td>
             </tr>`;
             table.innerHTML += headerRow;
@@ -119,7 +119,7 @@ function loadResultsData() {
         }
         
         let row = `<tr>
-            <td style="font-weight: 500; color: var(--text-main); padding-left: ${chosenSem === 'All' ? '2rem' : '1rem'};">${r.subject}</td>
+            <td style="font-weight: 500; color: var(--text-main); padding-left: ${chosenBatch === 'All' ? '2rem' : '1rem'};">${r.subject}</td>
             <td>${r.passMark || "N/A"}</td>
             <td style="font-weight: bold;">${r.marks}</td>
             <td><span class="badge ${badgeClass}">${r.grade}</span></td>

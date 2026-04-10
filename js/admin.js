@@ -47,7 +47,7 @@ function addStudent() {
     let session = document.getElementById("ssession").value.trim();
     let gender = document.getElementById("sgender").value;
     let dob = document.getElementById("sdob").value;
-    let sclass = document.getElementById("sclass").value.trim();
+    let sbatch = document.getElementById("sbatch").value;
     let section = document.getElementById("ssection").value.trim();
     let guardian = document.getElementById("sguardian").value.trim();
 
@@ -67,7 +67,7 @@ function addStudent() {
 
     users.push({ 
         name, email, mobile, password, role: "student",
-        session, gender, dob, class: sclass, section, guardian, status: "Active" 
+        session, gender, dob, batch: sbatch, class: sbatch, section, guardian, status: "Active" 
     });
     localStorage.setItem("users", JSON.stringify(users));
 
@@ -79,7 +79,7 @@ function addStudent() {
     document.getElementById("smobile").value = '';
     document.getElementById("ssession").value = '';
     document.getElementById("sdob").value = '';
-    document.getElementById("sclass").value = '';
+    document.getElementById("sbatch").value = 'Batch 1';
     document.getElementById("ssection").value = '';
     document.getElementById("sguardian").value = '';
 
@@ -98,19 +98,35 @@ function closeAddStudentModal() {
     if(modal) modal.classList.remove("active");
 }
 
-function loadStudentDropdown() {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let students = users.filter(u => u.role === "student");
+function loadStudentDropdownByBatch() {
+    let batchVal = document.getElementById("markBatchSelect").value;
     let select = document.getElementById("studentSelect");
     if (!select) return;
 
-    select.innerHTML = '<option value="">-- Choose a Student --</option>';
-    students.forEach(s => {
-        let option = document.createElement("option");
-        option.value = s.name; // Use name as primary key
-        option.textContent = s.name;
-        select.appendChild(option);
+    if (!batchVal) {
+        select.innerHTML = '<option value="">-- Select a Batch First --</option>';
+        return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let students = users.filter(u => {
+        if (u.role !== "student") return false;
+        // Use batch property if it exists, otherwise fallback to class
+        let studentBatch = u.batch || u.class;
+        return studentBatch === batchVal;
     });
+
+    if(students.length === 0) {
+        select.innerHTML = '<option value="">-- No Students Found --</option>';
+    } else {
+        select.innerHTML = '<option value="">-- Choose a Student --</option>';
+        students.forEach(s => {
+            let option = document.createElement("option");
+            option.value = s.name;
+            option.textContent = s.name;
+            select.appendChild(option);
+        });
+    }
 
     // Ensure at least one row exists when loading the section
     let container = document.getElementById("subjectsContainer");
@@ -164,7 +180,7 @@ function uploadMarks() {
     let recordsToUpload = [];
     let hasError = false;
 
-    let sem = document.getElementById("markSemesterSelect").value;
+    let batchVal = document.getElementById("markBatchSelect").value;
 
     rows.forEach(row => {
         let subject = row.querySelector(".sub-name").value.trim();
@@ -176,7 +192,7 @@ function uploadMarks() {
             hasError = true;
         } else {
             recordsToUpload.push({
-                name: studentName, semester: sem, subject, passMark, marks, grade, date: new Date().toLocaleDateString()
+                name: studentName, batch: batchVal, subject, passMark, marks, grade, date: new Date().toLocaleDateString()
             });
         }
     });
@@ -187,13 +203,18 @@ function uploadMarks() {
     }
 
     let results = JSON.parse(localStorage.getItem("results")) || [];
+    
+    // Clear previous marks for this student and batch to prevent duplicates
+    results = results.filter(r => !(r.name === studentName && r.batch === batchVal));
+    
     recordsToUpload.forEach(r => results.push(r));
     localStorage.setItem("results", JSON.stringify(results));
 
     if(typeof showToast === 'function') showToast(`${recordsToUpload.length} subject record(s) uploaded!`, "success");
 
     // Reset Form
-    document.getElementById("studentSelect").value = "";
+    document.getElementById("markBatchSelect").value = "";
+    loadStudentDropdownByBatch(); // Resets student dropdown
     document.getElementById("subjectsContainer").innerHTML = "";
     addSubjectRow();
 
@@ -248,7 +269,9 @@ function editStudent(studentName) {
     document.getElementById("editSession").value = user.session || "";
     document.getElementById("editGender").value = user.gender || "Male";
     document.getElementById("editDob").value = user.dob || "";
-    document.getElementById("editClass").value = user.class || "";
+    
+    let editBatchElem = document.getElementById("editBatch");
+    if (editBatchElem) editBatchElem.value = user.batch || user.class || "Batch 1";
     document.getElementById("editSection").value = user.section || "";
     document.getElementById("editGuardian").value = user.guardian || "";
     document.getElementById("editStatus").value = user.status || "Active";
@@ -269,7 +292,9 @@ function saveStudentChanges() {
     let newSession = document.getElementById("editSession").value.trim();
     let newGender = document.getElementById("editGender").value;
     let newDob = document.getElementById("editDob").value;
-    let newClass = document.getElementById("editClass").value.trim();
+    
+    let editBatchElem = document.getElementById("editBatch");
+    let newBatch = editBatchElem ? editBatchElem.value : "Batch 1";
     let newSection = document.getElementById("editSection").value.trim();
     let newGuardian = document.getElementById("editGuardian").value.trim();
     let newStatus = document.getElementById("editStatus").value;
@@ -297,7 +322,8 @@ function saveStudentChanges() {
         users[index].session = newSession;
         users[index].gender = newGender;
         users[index].dob = newDob;
-        users[index].class = newClass;
+        users[index].batch = newBatch;
+        users[index].class = newBatch;
         users[index].section = newSection;
         users[index].guardian = newGuardian;
         users[index].status = newStatus;
@@ -381,23 +407,37 @@ function viewAcademicProfile(studentName) {
     document.getElementById("profileDetailPane").style.display = "block";
     document.getElementById("managedStudentName").innerText = studentName;
 
-    // Load Class
+    // Load Profile Info
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let user = users.find(u => u.name === studentName && u.role === "student");
-    document.getElementById("academicClassInput").value = user ? (user.class || "") : "";
+    
+    let detailsContainer = document.getElementById("academicProfileDetails");
+    if (detailsContainer && user) {
+        detailsContainer.innerHTML = `
+            <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Register Num</div><div style="font-weight:600;">${user.session || "N/A"}</div></div>
+            <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Email</div><div style="font-weight:600;">${user.email || "N/A"}</div></div>
+            <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile</div><div style="font-weight:600;">${user.mobile || "N/A"}</div></div>
+            <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">DOB</div><div style="font-weight:600;">${user.dob || "N/A"}</div></div>
+            <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Gender</div><div style="font-weight:600;">${user.gender || "N/A"}</div></div>
+            <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Mapped Batch</div><div style="font-weight:600;">${user.batch || user.class || "N/A"}</div></div>
+        `;
+    }
 
-    loadAcademicSemesterData();
+    loadAcademicBatchData();
 }
 
-function loadAcademicSemesterData() {
+function loadAcademicBatchData() {
     if (!currentlyViewingAcademicStudent) return;
-    let sem = document.getElementById("academicSemesterSelect").value;
+    
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let user = users.find(u => u.name === currentlyViewingAcademicStudent && u.role === "student");
+    let batchVal = user ? (user.batch || user.class || "Batch 1") : "Batch 1";
     
     // Load Marks
     let results = JSON.parse(localStorage.getItem("results")) || [];
-    let studentResults = results.filter(r => r.name === currentlyViewingAcademicStudent && (r.semester === sem || (!r.semester && sem === "Semester 1")));
+    let studentResults = results.filter(r => r.name === currentlyViewingAcademicStudent && (r.batch === batchVal || (!r.batch && batchVal === "Batch 1")));
     
-    let container = document.getElementById("academicMarksContainer");
+    let container = document.getElementById("academicMarksTableBody");
     container.innerHTML = "";
     
     if (studentResults.length === 0) {
@@ -410,53 +450,45 @@ function loadAcademicSemesterData() {
 }
 
 function addAcademicSubjectRow(subject = "", passMark = "", marks = "", grade = "") {
-    let container = document.getElementById("academicMarksContainer");
-    let row = document.createElement("div");
+    let tbody = document.getElementById("academicMarksTableBody");
+    let row = document.createElement("tr");
     row.className = "subject-row";
-    row.style = "display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;";
 
     row.innerHTML = `
-        <div style="flex: 2;">
+        <td>
             <input type="text" class="sub-name" placeholder="Subject Name" value="${subject}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </div>
-        <div style="flex: 1;">
+        </td>
+        <td>
             <input type="number" class="sub-pass" placeholder="Pass Mark" value="${passMark}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </div>
-        <div style="flex: 1;">
+        </td>
+        <td>
             <input type="number" class="sub-marks" placeholder="Marks" value="${marks}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </div>
-        <div style="flex: 1;">
+        </td>
+        <td>
             <input type="text" class="sub-grade" placeholder="Grade" value="${grade}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </div>
-        <div>
-            <button class="btn" style="background:#EF4444; color:white; padding: 0.5rem;" onclick="this.parentElement.parentElement.remove()">Remove</button>
-        </div>
+        </td>
+        <td style="text-align: center;">
+            <button class="btn" style="background:#EF4444; color:white; padding: 0.5rem; width: 100%;" onclick="this.parentElement.parentElement.remove()">Remove</button>
+        </td>
     `;
-    container.appendChild(row);
+    tbody.appendChild(row);
 }
 
 function saveAcademicProfile() {
     if (!currentlyViewingAcademicStudent) return;
 
-    let newClass = document.getElementById("academicClassInput").value.trim();
-
-    // 1. Update Class in User Object
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let userIndex = users.findIndex(u => u.name === currentlyViewingAcademicStudent && u.role === "student");
-    if (userIndex !== -1) {
-        users[userIndex].class = newClass;
-        localStorage.setItem("users", JSON.stringify(users));
-    }
-
     // 2. Overwrite Marks in Results Object
     let results = JSON.parse(localStorage.getItem("results")) || [];
-    let sem = document.getElementById("academicSemesterSelect").value;
     
-    // Wipe old marks for this student specifically for the targeted semester
-    results = results.filter(r => !(r.name === currentlyViewingAcademicStudent && (r.semester === sem || (!r.semester && sem === "Semester 1"))));
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let user = users.find(u => u.name === currentlyViewingAcademicStudent && u.role === "student");
+    let batchVal = user ? (user.batch || user.class || "Batch 1") : "Batch 1";
+    
+    // Wipe old marks for this student specifically for the targeted batch
+    results = results.filter(r => !(r.name === currentlyViewingAcademicStudent && (r.batch === batchVal || (!r.batch && batchVal === "Batch 1"))));
 
     // Harvest new mapped marks
-    let rows = document.querySelectorAll("#academicMarksContainer .subject-row");
+    let rows = document.querySelectorAll("#academicMarksTableBody .subject-row");
     let hasError = false;
 
     rows.forEach(row => {
@@ -471,7 +503,7 @@ function saveAcademicProfile() {
             } else {
                 results.push({
                     name: currentlyViewingAcademicStudent, 
-                    semester: sem,
+                    batch: batchVal,
                     subject, 
                     passMark, 
                     marks, 
@@ -522,8 +554,5 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    let academicSem = document.getElementById("academicSemesterSelect");
-    if (academicSem) {
-        academicSem.addEventListener("change", loadAcademicSemesterData);
-    }
+
 });
