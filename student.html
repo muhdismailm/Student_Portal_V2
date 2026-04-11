@@ -187,31 +187,47 @@
                             Card</button>
                     </div>
 
-                    <div class="card" style="max-width: 100%;">
-                        <div class="table-container"
-                            style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px;">
-                            <table style="min-width: 800px;">
-                                <thead style="background: #475569; color: white;">
-                                    <tr>
-                                        <th>Student Name</th>
-                                        <th>Register Number</th>
-                                        <th>Place</th>
-                                        <th>Campus Name</th>
-                                        <th>Status</th>
-                                        <th>Grade</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="resultTable">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
+                    <div class="grade-card" id="gradeCardContainer" style="display: none;">
+                        <div class="grade-card-header">
+                            <h1>Academic Grade Report</h1>
+                            <p style="color: var(--text-muted); margin-top: 0.25rem;">Consolidated Statement of Results</p>
                         </div>
 
-                        <div id="noResults" class="print-hide"
-                            style="display: none; text-align: center; padding: 2rem; color: var(--text-muted); border: 1px dashed var(--border-color); border-radius: 8px; margin-top: 1rem;">
-                            <span style="font-size: 2rem;">📭</span>
-                            <p style="margin-top: 1rem;">No result published.</p>
+                        <div class="info-grid">
+                            <div class="info-box">
+                                <div class="info-label">Student Name</div>
+                                <div class="info-value" id="resName">N/A</div>
+                            </div>
+                            <div class="info-box">
+                                <div class="info-label">Register Number</div>
+                                <div class="info-value" id="resRegNo">N/A</div>
+                            </div>
+                            <div class="info-box">
+                                <div class="info-label">Place</div>
+                                <div class="info-value" id="resPlace">N/A</div>
+                            </div>
+                            <div class="info-box">
+                                <div class="info-label">Campus Name</div>
+                                <div class="info-value" id="resCampus">N/A</div>
+                            </div>
                         </div>
+
+                        <div class="result-summary">
+                            <div class="summary-box status-box">
+                                <div class="summary-label">Final Status</div>
+                                <div class="summary-value" id="resStatus">--</div>
+                            </div>
+                            <div class="summary-box grade-box">
+                                <div class="summary-label">Consolidated Grade</div>
+                                <div class="summary-value" id="resGrade">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="noResults" class="print-hide"
+                        style="display: none; text-align: center; padding: 2rem; color: var(--text-muted); border: 1px dashed var(--border-color); border-radius: 8px; margin-top: 1rem;">
+                        <span style="font-size: 2rem;">📭</span>
+                        <p style="margin-top: 1rem;">No result published.</p>
                     </div>
                 </section>
 

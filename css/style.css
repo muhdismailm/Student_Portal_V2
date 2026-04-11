@@ -344,3 +344,156 @@ tbody tr:hover {
     background: #DBEAFE;
     color: #1E40AF;
 }
+
+/* Print Styles */
+@media print {
+    @page {
+        size: portrait;
+        margin: 15mm;
+    }
+
+    body {
+        background: white !important;
+        font-size: 10pt;
+    }
+
+    .print-hide {
+        display: none !important;
+    }
+
+    .student-navbar, .sidebar-nav, .welcome-banner {
+        display: none !important;
+    }
+
+    .student-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    .table-container {
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+        overflow: visible !important;
+    }
+
+    table {
+        min-width: 100% !important;
+        width: 100% !important;
+        table-layout: fixed;
+    }
+
+    th, td {
+        padding: 8px 4px !important;
+        word-wrap: break-word;
+    }
+
+    .badge {
+        border: 1px solid #ccc !important;
+        background: transparent !important;
+        color: black !important;
+    }
+
+    .grade-card {
+        border: 2px solid #1e293b !important;
+        padding: 20mm !important;
+    }
+
+    .result-summary {
+        margin-top: 30px !important;
+    }
+}
+
+/* Grade Card UI */
+.grade-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+
+.grade-card-header {
+    text-align: center;
+    border-bottom: 2px solid var(--primary-blue);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.grade-card-header h1 {
+    font-size: 1.75rem;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.info-box {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    padding: 1.25rem;
+    border-radius: 12px;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.info-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.result-summary {
+    display: flex;
+    gap: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+}
+
+.summary-box {
+    flex: 1;
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.summary-box.status-box {
+    background: #ecfdf5;
+    border: 1px solid #10b981;
+}
+
+.summary-box.grade-box {
+    background: #eff6ff;
+    border: 1px solid #3b82f6;
+}
+
+.summary-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.summary-value {
+    font-size: 2rem;
+    font-weight: 800;
+}

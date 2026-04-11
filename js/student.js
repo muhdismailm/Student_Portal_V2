@@ -102,49 +102,50 @@ async function loadResultsData() {
             myResults = nameResults;
         }
 
-        let table = document.getElementById("resultTable");
+        let gradeCard = document.getElementById("gradeCardContainer");
         let noResultsDisplay = document.getElementById("noResults");
-        let tableContainer = document.querySelector(".table-container");
 
         if (!myResults || myResults.length === 0) {
             console.log("No results found for student.");
-            if(tableContainer) tableContainer.style.display = "none";
+            if(gradeCard) gradeCard.style.display = "none";
             if(noResultsDisplay) noResultsDisplay.style.display = "block";
             return;
         }
 
-        if(tableContainer) tableContainer.style.display = "block";
+        if(gradeCard) gradeCard.style.display = "block";
         if(noResultsDisplay) noResultsDisplay.style.display = "none";
 
-        table.innerHTML = ""; 
+        // Since it's a consolidated result card, we'll take the first record found
+        // or prioritize one that has more data if there are multiples.
+        let r = myResults[0]; 
 
-        myResults.forEach(r => {
-            let badgeClass = "badge-blue";
-            if (["A", "A+", "A-", "O"].includes((r.grade || "").toUpperCase())) {
-                badgeClass = "badge-green";
-            }
-            
-            let passMark = parseFloat(r.pass_mark) || 0;
-            let obtained = parseFloat(r.marks) || 0;
-            
-            let statusBadge = "";
-            if (r.pass_mark) {
-                statusBadge = obtained >= passMark ? '<span class="badge badge-green">PASS</span>' : '<span class="badge" style="background:#FEE2E2;color:#991B1B">FAIL</span>';
-            } else {
-                statusBadge = '<span class="badge badge-blue">N/A</span>';
-            }
-            
-            // Strictly show the 6 required fields: Name, Reg No, Place, Campus, Status, Grade
-            let row = `<tr>
-                <td style="font-weight: 600; color: var(--text-main);">${currentUser.name || "N/A"}</td>
-                <td>${currentUser.session || "N/A"}</td>
-                <td>${currentUser.place || "N/A"}</td>
-                <td>${currentUser.campus || "N/A"}</td>
-                <td>${statusBadge}</td>
-                <td><span class="badge ${badgeClass}">${r.grade || "N/A"}</span></td>
-            </tr>`;
-            table.innerHTML += row;
-        });
+        // Populate the formal 4-box grid
+        const setVal = (id, val) => {
+            let el = document.getElementById(id);
+            if(el) el.textContent = val || "N/A";
+        };
+
+        setVal("resName", currentUser.name);
+        setVal("resRegNo", currentUser.session);
+        setVal("resPlace", currentUser.place);
+        setVal("resCampus", currentUser.campus);
+
+        // Populate the large Result Summary Footer
+        let passMark = parseFloat(r.pass_mark) || 0;
+        let obtained = parseFloat(r.marks) || 0;
+        let isPass = obtained >= passMark;
+
+        let statusEl = document.getElementById("resStatus");
+        if(statusEl) {
+            statusEl.textContent = isPass ? "PASS" : "FAIL";
+            statusEl.style.color = isPass ? "#065f46" : "#991b1b";
+        }
+
+        let gradeEl = document.getElementById("resGrade");
+        if(gradeEl) {
+            gradeEl.textContent = r.grade || "--";
+            gradeEl.style.color = "#1e40af";
+        }
     } catch (err) {
         console.error("Load Results Error:", err);
         if(typeof showToast === 'function') showToast("Could not load results. Please check connection.", "error");
