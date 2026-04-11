@@ -144,15 +144,14 @@
                             <hr style="border: 0; height: 1px; background: var(--border-color); margin: 2rem 0;">
 
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <h3 style="font-size: 1.125rem;">Student Marks</h3>
-                                <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="addAcademicSubjectRow()">+ Add Mark Row</button>
+                                <h3 style="font-size: 1.125rem;">Student Final Mark</h3>
                             </div>
 
                             <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto;">
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>Subject Name</th>
+                                            <th>Label</th>
                                             <th style="width: 120px;">Pass Mark</th>
                                             <th style="width: 120px;">Obtained</th>
                                             <th style="width: 120px;">Grade</th>
@@ -196,15 +195,17 @@
                         </div>
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; margin-top: 2rem;">
-                            <h3 style="font-size: 1.125rem;">Subjects & Marks</h3>
-                            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="addSubjectRow()">+ Add Subject</button>
+                            <h3 style="font-size: 1.125rem;">Final Result Entry</h3>
                         </div>
 
                         <div id="subjectsContainer">
                             <!-- Dynamic rows injected here -->
                         </div>
                         
-                        <button class="btn btn-success btn-block" style="margin-top: 2rem;" onclick="uploadMarks()">Submit All Records</button>
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button class="btn btn-success" style="flex: 2;" onclick="uploadMarks()">Submit All Records</button>
+                            <button class="btn" style="flex: 1; background: #EF4444; color: white;" onclick="clearAllMarks()">Clear All Records</button>
+                        </div>
                     </div>
                 </section>
 
@@ -264,6 +265,14 @@
                     <label for="smobile">Guardian Mobile No</label>
                     <input type="text" id="smobile" placeholder="+1 234 567 8900">
                 </div>
+                <div class="form-group">
+                    <label for="splace">Place</label>
+                    <input type="text" id="splace" placeholder="e.g. City Name">
+                </div>
+                <div class="form-group">
+                    <label for="scampus">Campus Name</label>
+                    <input type="text" id="scampus" placeholder="Main Campus">
+                </div>
             </div>
             <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="addStudent()">Register a Student</button>
         </div>
@@ -321,6 +330,14 @@
                 <div class="form-group">
                     <label for="editMobile">Guardian Mobile No</label>
                     <input type="text" id="editMobile">
+                </div>
+                <div class="form-group">
+                    <label for="editPlace">Place</label>
+                    <input type="text" id="editPlace">
+                </div>
+                <div class="form-group">
+                    <label for="editCampus">Campus Name</label>
+                    <input type="text" id="editCampus">
                 </div>
                 <div class="form-group">
                     <label for="editStatus">Status</label>

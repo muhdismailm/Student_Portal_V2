@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
 
     if (!currentUser || currentUser.role !== "student") {
         window.location = "index.html";
@@ -19,161 +19,199 @@ document.addEventListener("DOMContentLoaded", () => {
     showSection('dashboardSection', document.querySelector('.sidebar-nav .nav-item.active'));
 });
 
-// Utility to switch sections
 function showSection(sectionId, btnElement) {
-    // Hide all
     document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-    
-    // Deactivate all nav items
     document.querySelectorAll(".sidebar-nav .nav-item").forEach(nav => nav.classList.remove("active"));
     
-    // Show active
     document.getElementById(sectionId).classList.add("active");
     if(btnElement) btnElement.classList.add("active");
 }
 
-function loadDashboardData() {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+async function loadDashboardData() {
+    // 1. Get the user data already stored from the login
+    let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
     if (!currentUser) return;
     
-    // Load fresh from users db to get the latest admin edits (like Class)
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let activeUserObj = users.find(u => u.email === currentUser.email && u.role === "student") || currentUser;
+    // 2. IMMEDIATELY show the data we already have
+    populateDashboard(currentUser);
     
-    document.getElementById("dispName").textContent = activeUserObj.name || "N/A";
-    document.getElementById("dispClass").textContent = activeUserObj.class || "Not Assigned";
-    document.getElementById("dispSection").textContent = activeUserObj.section || "N/A";
-    document.getElementById("dispSession").textContent = activeUserObj.session || "N/A";
-    document.getElementById("dispGender").textContent = activeUserObj.gender || "N/A";
-    document.getElementById("dispDob").textContent = activeUserObj.dob || "N/A";
-    document.getElementById("dispEmail").textContent = activeUserObj.email || "N/A";
-    document.getElementById("dispMobile").textContent = activeUserObj.mobile || "N/A";
-    document.getElementById("dispGuardian").textContent = activeUserObj.guardian || "N/A";
-}
+    try {
+        // 3. Silently fetch a fresh copy in the background
+        const { data: freshUser, error } = await window.sb
+            .from('profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
 
-function loadResultsData() {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser) return;
-
-    let results = JSON.parse(localStorage.getItem("results")) || [];
-    let batchFilter = document.getElementById("studentBatchFilter");
-    let chosenBatch = batchFilter ? batchFilter.value : "All";
-    
-    let myResults = results.filter(r => {
-        if (r.name !== currentUser.name) return false;
-        if (chosenBatch === "All") return true;
-        // Fallback older tracks with no semantic term mapping to Batch 1 by default
-        let rBatch = r.batch || "Batch 1"; 
-        return rBatch === chosenBatch;
-    });
-    
-    let table = document.getElementById("resultTable");
-    let noResultsDisplay = document.getElementById("noResults");
-    let tableContainer = document.querySelector(".table-container");
-
-    if (myResults.length === 0) {
-        if(tableContainer) tableContainer.style.display = "none";
-        if(noResultsDisplay) noResultsDisplay.style.display = "block";
-        return;
+        if (!error && freshUser) {
+            populateDashboard(freshUser);
+            sessionStorage.setItem("currentUser", JSON.stringify(freshUser));
+        }
+    } catch (err) {
+        console.error("Background refresh failed:", err);
     }
-
-    if(tableContainer) tableContainer.style.display = "block";
-    if(noResultsDisplay) noResultsDisplay.style.display = "none";
-
-    table.innerHTML = ""; // Clear existing
-
-    // Sort alphabetically by batch so they group nicely together
-    myResults.sort((a, b) => {
-        let batchA = a.batch || "Batch 1";
-        let batchB = b.batch || "Batch 1";
-        return batchA.localeCompare(batchB);
-    });
-
-    let currentRenderedBatch = "";
-
-    myResults.forEach(r => {
-        let rBatch = r.batch || "Batch 1";
-        if (chosenBatch === "All" && currentRenderedBatch !== rBatch) {
-            currentRenderedBatch = rBatch;
-            let headerRow = `<tr>
-                <td colspan="6" style="background: #f8fafc; font-weight: 600; color: var(--primary-blue); padding: 0.75rem 1rem; border-top: 2px solid var(--border-color); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;">
-                    ${rBatch}
-                </td>
-            </tr>`;
-            table.innerHTML += headerRow;
-        }
-
-        let badgeClass = "badge-blue";
-        if (["A", "A+", "A-", "O"].includes((r.grade || "").toUpperCase())) {
-            badgeClass = "badge-green";
-        }
-        
-        let passMark = parseFloat(r.passMark) || 0;
-        let obtained = parseFloat(r.marks) || 0;
-        
-        let statusBadge = "";
-        if (r.passMark) {
-            statusBadge = obtained >= passMark ? '<span class="badge badge-green">PASS</span>' : '<span class="badge" style="background:#FEE2E2;color:#991B1B">FAIL</span>';
-        } else {
-            statusBadge = '<span class="badge badge-blue">N/A</span>';
-        }
-        
-        let row = `<tr>
-            <td style="font-weight: 500; color: var(--text-main); padding-left: ${chosenBatch === 'All' ? '2rem' : '1rem'};">${r.subject}</td>
-            <td>${r.passMark || "N/A"}</td>
-            <td style="font-weight: bold;">${r.marks}</td>
-            <td><span class="badge ${badgeClass}">${r.grade}</span></td>
-            <td>${statusBadge}</td>
-            <td style="color: var(--text-muted);">${r.date || "N/A"}</td>
-        </tr>`;
-        table.innerHTML += row;
-    });
 }
 
-function loadProfileUpdateData() {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+function populateDashboard(user) {
+    if (!user) return;
+    
+    const fields = {
+        "dispName": user.name,
+        "dispClass": user.batch || user.class,
+        "dispSection": user.section,
+        "dispSession": user.session,
+        "dispGender": user.gender,
+        "dispDob": user.dob,
+        "dispEmail": user.email,
+        "dispMobile": user.mobile,
+        "dispGuardian": user.guardian
+    };
+
+    for (const [id, value] of Object.entries(fields)) {
+        const elem = document.getElementById(id);
+        if (elem) {
+            elem.textContent = value || "N/A";
+        }
+    }
+}
+
+async function loadResultsData() {
+    let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
     if (!currentUser) return;
 
-    // Refresh from DB
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let activeUserObj = users.find(u => u.email === currentUser.email && u.role === "student") || currentUser;
+    try {
+        console.log("Fetching results for:", currentUser.session, currentUser.name);
 
-    document.getElementById("updName").value = activeUserObj.name || "";
-    document.getElementById("updSession").value = activeUserObj.session || "";
-    document.getElementById("updEmail").value = activeUserObj.email || "";
-    document.getElementById("updMobile").value = activeUserObj.mobile || "";
+        // 1. Try fetching by Register Number (Reliable)
+        let { data: myResults, error } = await window.sb
+            .from('academic_results')
+            .select('*')
+            .eq('register_number', currentUser.session);
+
+        if (error) throw error;
+
+        // 2. Fallback: Try fetching by Name if no results found by ID
+        if (!myResults || myResults.length === 0) {
+            console.log("No results by ID, trying Name fallback...");
+            const { data: nameResults, error: nameError } = await window.sb
+                .from('academic_results')
+                .select('*')
+                .eq('student_name', currentUser.name);
+            
+            if (nameError) throw nameError;
+            myResults = nameResults;
+        }
+
+        let table = document.getElementById("resultTable");
+        let noResultsDisplay = document.getElementById("noResults");
+        let tableContainer = document.querySelector(".table-container");
+
+        if (!myResults || myResults.length === 0) {
+            console.log("No results found for student.");
+            if(tableContainer) tableContainer.style.display = "none";
+            if(noResultsDisplay) noResultsDisplay.style.display = "block";
+            return;
+        }
+
+        if(tableContainer) tableContainer.style.display = "block";
+        if(noResultsDisplay) noResultsDisplay.style.display = "none";
+
+        table.innerHTML = ""; 
+
+        myResults.forEach(r => {
+            let badgeClass = "badge-blue";
+            if (["A", "A+", "A-", "O"].includes((r.grade || "").toUpperCase())) {
+                badgeClass = "badge-green";
+            }
+            
+            let passMark = parseFloat(r.pass_mark) || 0;
+            let obtained = parseFloat(r.marks) || 0;
+            
+            let statusBadge = "";
+            if (r.pass_mark) {
+                statusBadge = obtained >= passMark ? '<span class="badge badge-green">PASS</span>' : '<span class="badge" style="background:#FEE2E2;color:#991B1B">FAIL</span>';
+            } else {
+                statusBadge = '<span class="badge badge-blue">N/A</span>';
+            }
+            
+            // Strictly show the 6 required fields: Name, Reg No, Place, Campus, Status, Grade
+            let row = `<tr>
+                <td style="font-weight: 600; color: var(--text-main);">${currentUser.name || "N/A"}</td>
+                <td>${currentUser.session || "N/A"}</td>
+                <td>${currentUser.place || "N/A"}</td>
+                <td>${currentUser.campus || "N/A"}</td>
+                <td>${statusBadge}</td>
+                <td><span class="badge ${badgeClass}">${r.grade || "N/A"}</span></td>
+            </tr>`;
+            table.innerHTML += row;
+        });
+    } catch (err) {
+        console.error("Load Results Error:", err);
+        if(typeof showToast === 'function') showToast("Could not load results. Please check connection.", "error");
+    }
 }
 
-function updateStudentProfile() {
+async function loadProfileUpdateData() {
+    // 1. Get existing data from session for instant display
+    let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+    if (!currentUser) return;
+
+    const populateFields = (user) => {
+        const nameInput = document.getElementById("updName");
+        const sessionInput = document.getElementById("updSession");
+        const emailInput = document.getElementById("updEmail");
+        const mobileInput = document.getElementById("updMobile");
+
+        if (nameInput) nameInput.value = user.name || "";
+        if (sessionInput) sessionInput.value = user.session || "";
+        if (emailInput) emailInput.value = user.email || "";
+        if (mobileInput) mobileInput.value = user.mobile || "";
+    };
+
+    populateFields(currentUser);
+
+    try {
+        // 2. Refresh from DB in background
+        const { data: user, error } = await window.sb
+            .from('profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (!error && user) {
+            populateFields(user);
+        }
+    } catch (err) {
+        console.error("Load Update Data Error:", err);
+    }
+}
+
+async function updateStudentProfile() {
     let newEmail = document.getElementById("updEmail").value.trim();
     let newMobile = document.getElementById("updMobile").value.trim();
 
     if (!newEmail) {
-        if(typeof showToast === 'function') showToast("Email cannot be empty.", "error");
+        if(typeof showToast === 'function') showToast("Email is required.", "error");
         return;
     }
 
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    
-    // Check if new email conflicts with another user
-    if (newEmail !== currentUser.email && users.find(u => u.email === newEmail)) {
-        if(typeof showToast === 'function') showToast("This email is already in use by another account.", "error");
-        return;
-    }
-    
-    let index = users.findIndex(u => u.email === currentUser.email && u.role === "student");
-    
-    if (index !== -1) {
-        users[index].email = newEmail;
-        users[index].mobile = newMobile;
-        localStorage.setItem("users", JSON.stringify(users));
-        
-        // Update Session
+    let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+
+    try {
+        const { error } = await window.sb
+            .from('profiles')
+            .update({ email: newEmail, mobile: newMobile })
+            .eq('id', currentUser.id);
+
+        if (error) throw error;
+
         currentUser.email = newEmail;
         currentUser.mobile = newMobile;
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
         
-        if(typeof showToast === 'function') showToast("Profile successfully updated!", "success");
+        if(typeof showToast === 'function') showToast("Profile updated!", "success");
+    } catch (err) {
+        console.error("Update Profile Error:", err);
+        if(typeof showToast === 'function') showToast("Error updating profile.", "error");
     }
 }

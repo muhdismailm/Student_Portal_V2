@@ -182,16 +182,9 @@
                             <p class="print-hide">Official academic records mapping to your subjects.</p>
                         </div>
                         <div style="display: flex; gap: 1rem; align-items: center;" class="print-hide">
-                            <label for="studentBatchFilter" style="font-weight: 500;">Filter by Batch:</label>
-                            <select id="studentBatchFilter" onchange="loadResultsData()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); font-family: 'Inter'; width: 200px;">
-                                <option value="All">All Batches</option>
-                                <option value="Batch 1">Batch 1</option>
-                                <option value="Batch 2">Batch 2</option>
-                                <option value="Batch 3">Batch 3</option>
-                                <option value="Batch 4">Batch 4</option>
-                            </select>
                         </div>
-                        <button class="btn btn-primary print-hide" onclick="window.print()">Download Result Card</button>
+                        <button class="btn btn-primary print-hide" onclick="window.print()">Download Result
+                            Card</button>
                     </div>
 
                     <div class="card" style="max-width: 100%;">
@@ -200,12 +193,12 @@
                             <table style="min-width: 800px;">
                                 <thead style="background: #475569; color: white;">
                                     <tr>
-                                        <th>Subject</th>
-                                        <th>Pass Mark</th>
-                                        <th>Marks Obtained</th>
-                                        <th>Grade</th>
+                                        <th>Student Name</th>
+                                        <th>Register Number</th>
+                                        <th>Place</th>
+                                        <th>Campus Name</th>
                                         <th>Status</th>
-                                        <th>Date Posted</th>
+                                        <th>Grade</th>
                                     </tr>
                                 </thead>
                                 <tbody id="resultTable">
@@ -241,7 +234,7 @@
                             <input type="text" id="updSession" disabled
                                 style="background:#f1f5f9; color:#94a3b8; cursor:not-allowed;">
                         </div>
-                        
+
                         <hr style="border: 0; height: 1px; background: var(--border-color); margin: 2rem 0;">
 
                         <div class="form-group">

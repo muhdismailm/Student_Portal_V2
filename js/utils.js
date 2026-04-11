@@ -32,12 +32,4 @@ function showToast(message, type = "success") {
     }, 3000);
 }
 
-// Ensure the default admin exists on load
-(function initDefaultData() {
-    if (!localStorage.getItem("users")) {
-        localStorage.setItem("users", JSON.stringify([
-            { email: "admin@gmail.com", password: "admin123", role: "admin", name: "Administrator" },
-            { email: "student@gmail.com", password: "password", role: "student", name: "Demo Student" }
-        ]));
-    }
-})();
+
