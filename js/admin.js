@@ -623,6 +623,95 @@ async function deleteIndividualResult() {
     }
 }
 
+function resetDownloadSection() {
+    let select = document.getElementById("downloadBatchSelect");
+    if (select) select.value = "";
+    let container = document.getElementById("batchReportContainer");
+    if (container) container.style.display = "none";
+    let noRes = document.getElementById("downloadNoResults");
+    if (noRes) noRes.style.display = "none";
+}
+
+async function loadBatchDownloadData() {
+    let batchVal = document.getElementById("downloadBatchSelect").value;
+    let container = document.getElementById("batchReportContainer");
+    let noRes = document.getElementById("downloadNoResults");
+    let tbody = document.getElementById("batchPreviewTableBody");
+    let batchLabel = document.getElementById("reportBatchLabel");
+
+    if (!batchVal) {
+        if (container) container.style.display = "none";
+        if (noRes) noRes.style.display = "none";
+        return;
+    }
+
+    try {
+        if (batchLabel) batchLabel.textContent = batchVal;
+        
+        // 1. Fetch Students in Batch
+        const { data: students, error: studentError } = await window.sb
+            .from('profiles')
+            .select('name, session, place, campus')
+            .eq('role', 'student')
+            .eq('batch', batchVal);
+
+        if (studentError) throw studentError;
+
+        if (!students || students.length === 0) {
+            if (container) container.style.display = "none";
+            if (noRes) noRes.style.display = "block";
+            return;
+        }
+
+        // 2. Fetch all academic results for this batch
+        const { data: results, error: resError } = await window.sb
+            .from('academic_results')
+            .select('*')
+            .eq('batch', batchVal);
+
+        if (resError) throw resError;
+
+        // 3. Map results to students
+        tbody.innerHTML = "";
+        let foundAny = false;
+
+        students.forEach(s => {
+            // Find result for this student (consolidated)
+            let res = results.find(r => r.register_number === s.session || r.student_name === s.name);
+            
+            if (res) {
+                foundAny = true;
+                let passMark = parseFloat(res.pass_mark) || 0;
+                let obtained = parseFloat(res.marks) || 0;
+                let isPass = obtained >= passMark;
+                let statusText = isPass ? "PASS" : "FAIL";
+                let statusColor = isPass ? "#059669" : "#DC2626";
+
+                let row = `<tr>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">${s.session || "N/A"}</td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border-color); font-weight: 600;">${s.name}</td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border-color); text-align: center;">${res.marks || "0"}</td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border-color); text-align: center; font-weight: bold; color: var(--primary-blue);">${res.grade || "N/A"}</td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border-color); text-align: center; font-weight: bold; color: ${statusColor};">${statusText}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
+        });
+
+        if (!foundAny) {
+            if (container) container.style.display = "none";
+            if (noRes) noRes.style.display = "block";
+        } else {
+            if (container) container.style.display = "block";
+            if (noRes) noRes.style.display = "none";
+        }
+
+    } catch (err) {
+        console.error("Load Batch Report Error:", err);
+        if(typeof showToast === 'function') showToast("Error loading batch results.", "error");
+    }
+}
+
 async function saveAcademicProfile() {
     if (!currentlyViewingAcademicStudent) return;
 

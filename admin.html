@@ -12,7 +12,7 @@
     <div class="dashboard-container">
         
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar print-hide">
             <div class="sidebar-header">
                 <h3>EduPulse<span style="color: var(--primary-green);">.</span></h3>
             </div>
@@ -27,6 +27,9 @@
                 <button class="nav-item" onclick="showSection('uploadMarks', this); loadStudentDropdownByBatch();">
                     Upload Marks
                 </button>
+                <button class="nav-item" onclick="showSection('downloadSection', this); resetDownloadSection();">
+                    Download Results
+                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -39,7 +42,7 @@
         <!-- Main Content -->
         <main class="main-content">
             
-            <header class="top-header">
+            <header class="top-header print-hide">
                 <div class="header-search">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     <input type="text" placeholder="Search">
@@ -206,6 +209,63 @@
                             <button class="btn btn-success" style="flex: 2;" onclick="uploadMarks()">Submit All Records</button>
                             <button class="btn" style="flex: 1; background: #EF4444; color: white;" onclick="clearAllMarks()">Clear All Records</button>
                         </div>
+                    </div>
+                </section>
+
+                <!-- Download Results Section -->
+                <section id="downloadSection" class="section">
+                    <div class="section-header print-hide">
+                        <h2>Download Batch Results</h2>
+                        <p>Generate consolidated reports for entire student batches.</p>
+                    </div>
+
+                    <div class="card print-hide" style="margin-bottom: 2rem;">
+                        <div class="form-group" style="max-width: 400px; margin-bottom: 0;">
+                            <label>Select Batch to Report</label>
+                            <select id="downloadBatchSelect" onchange="loadBatchDownloadData()" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: white; font-family: 'Inter';">
+                                <option value="">-- Choose Batch --</option>
+                                <option value="Batch 1">Batch 1</option>
+                                <option value="Batch 2">Batch 2</option>
+                                <option value="Batch 3">Batch 3</option>
+                                <option value="Batch 4">Batch 4</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="batchReportContainer" class="card" style="display: none; max-width: 100%;">
+                        <div class="grade-card-header" style="text-align: center; border-bottom: 2px solid var(--primary-blue); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+                            <h1 style="color: var(--primary-blue); text-transform: uppercase; font-size: 2.5rem; margin-bottom: 0.5rem;">Institution Name</h1>
+                            <h2 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 0.5rem;">Academic Batch Report</h2>
+                            <p id="reportBatchLabel" style="color: var(--text-muted); font-size: 1.125rem; font-weight: 700; text-transform: uppercase;"></p>
+                        </div>
+
+                        <div class="table-container" style="box-shadow: none; border: 1px solid var(--border-color); overflow-x: auto;">
+                            <table style="width: 100%;" id="batchPreviewTable">
+                                <thead style="background: #475569; color: white;">
+                                    <tr>
+                                        <th style="padding: 1rem; text-align: left;">Register Number</th>
+                                        <th style="padding: 1rem; text-align: left;">Name</th>
+                                        <th style="padding: 1rem; text-align: center;">Marks</th>
+                                        <th style="padding: 1rem; text-align: center;">Grade</th>
+                                        <th style="padding: 1rem; text-align: center;">Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchPreviewTableBody">
+                                    <!-- Results injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="print-hide" style="margin-top: 2.5rem; text-align: right;">
+                            <button class="btn btn-primary" onclick="window.print()">
+                                Download Batch Report (PDF)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="downloadNoResults" class="card" style="display: none; text-align: center; padding: 3rem;">
+                        <span style="font-size: 3rem;">📊</span>
+                        <p style="margin-top: 1rem; color: var(--text-muted); font-size: 1.125rem;">No results found for this batch.</p>
                     </div>
                 </section>
 
