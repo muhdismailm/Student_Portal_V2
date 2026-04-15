@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Institution Portal | Admin</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-    <div class="dashboard-container">
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container p-0">
         
-        <!-- Sidebar -->
-        <aside class="sidebar print-hide">
+        <!-- Sidebar - Desktop (xl and up) -->
+        <aside class="sidebar d-none d-xl-flex print-hide">
             <div class="sidebar-header">
                 <h3>EduPulse<span style="color: var(--primary-green);">.</span></h3>
             </div>
@@ -33,20 +36,55 @@
             </nav>
 
             <div class="sidebar-footer">
-                <button class="nav-item" style="color: #EF4444;" onclick="logout()">
+                <button class="nav-item m-0" style="color: #EF4444;" onclick="logout()">
                     Log Out
                 </button>
             </div>
         </aside>
 
+        <!-- Offcanvas Sidebar - Mobile/Tablet (below xl) -->
+        <div class="offcanvas offcanvas-start print-hide" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+            <div class="offcanvas-header sidebar-header border-bottom">
+                <h3 class="offcanvas-title" id="mobileSidebarLabel">EduPulse<span style="color: var(--primary-green);">.</span></h3>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <nav class="sidebar-nav p-3">
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('overviewSection', this); loadStudents();">
+                        Dashboard
+                    </button>
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('studentProfilesSection', this); loadStudentProfilesList();">
+                        Student Profiles
+                    </button>
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('uploadMarks', this); loadStudentDropdownByBatch();">
+                        Upload Marks
+                    </button>
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('downloadSection', this); resetDownloadSection();">
+                        Download Results
+                    </button>
+                </nav>
+                <div class="sidebar-footer p-3 border-top mt-auto">
+                    <button class="nav-item m-0" style="color: #EF4444;" onclick="logout()">
+                        Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <main class="main-content">
             
-            <header class="top-header print-hide">
+            <header class="top-header print-hide bg-white shadow-sm sticky-top px-3 px-md-4">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Mobile Menu Toggle -->
+                    <button class="btn d-xl-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                </div>
 
-                <div class="user-profile">
-                    <span id="adminName">Administrator</span>
-                    <div class="avatar">A</div>
+                <div class="user-profile d-flex align-items-center gap-2">
+                    <span id="adminName" class="d-none d-sm-inline">Administrator</span>
+                    <div class="avatar bg-primary text-white">A</div>
                 </div>
             </header>
 
@@ -73,9 +111,9 @@
                     </div>
 
                     <!-- Table -->
-                    <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto;">
-                        <table style="min-width: 1200px;">
-                            <thead>
+                    <div class="table-responsive" style="border: 1px solid var(--border-color); border-radius: 8px;">
+                        <table class="table mb-0" style="min-width: 1200px;">
+                            <thead class="table-dark">
                                 <tr>
                                     <th>S.No.</th>
                                     <th>Student Name</th>
@@ -111,10 +149,10 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             <input type="text" id="academicSearch" placeholder="Search student name or batch...">
                         </div>
-                        <div class="card" style="max-width: 100%;">
-                            <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px;">
-                                <table>
-                                    <thead>
+                        <div class="card w-100 shadow-sm">
+                            <div class="table-responsive" style="border: 1px solid var(--border-color); border-radius: 8px;">
+                                <table class="table mb-0">
+                                    <thead class="table-light">
                                         <tr>
                                             <th>S.No.</th>
                                             <th>Student Name</th>
@@ -138,9 +176,9 @@
                             <p>Edit student's class explicitly and modify existing academic records.</p>
                         </div>
 
-                        <div class="card" style="max-width: 100%;">
+                        <div class="card w-100 shadow-sm">
                             <!-- Read-only profile details injected here -->
-                            <div id="academicProfileDetails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; background: #f8fafc; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1.5rem;">
+                            <div id="academicProfileDetails" class="row g-3 bg-light p-3 border rounded mb-4 mx-0">
                                 <!-- Populated dynamically by admin.js -->
                             </div>
                             
@@ -152,9 +190,9 @@
                                 <h3 style="font-size: 1.125rem;">Student Final Mark</h3>
                             </div>
 
-                            <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto;">
-                                <table>
-                                    <thead>
+                            <div class="table-responsive" style="border: 1px solid var(--border-color); border-radius: 8px;">
+                                <table class="table mb-0">
+                                    <thead class="table-light">
                                         <tr>
                                             <th>Label</th>
                                             <th style="width: 120px;">Pass Mark</th>
@@ -241,15 +279,15 @@
                             <p id="reportBatchLabel" style="color: var(--text-muted); font-size: 1.125rem; font-weight: 700; text-transform: uppercase;"></p>
                         </div>
 
-                        <div class="table-container" style="box-shadow: none; border: 1px solid var(--border-color); overflow-x: auto;">
-                            <table style="width: 100%;" id="batchPreviewTable">
+                        <div class="table-responsive mb-4" style="border: 1px solid var(--border-color); border-radius: 8px;">
+                            <table class="table table-bordered mb-0" id="batchPreviewTable">
                                 <thead style="background: #475569; color: white;">
                                     <tr>
-                                        <th style="padding: 1rem; text-align: left;">Register Number</th>
-                                        <th style="padding: 1rem; text-align: left;">Name</th>
-                                        <th style="padding: 1rem; text-align: center;">Marks</th>
-                                        <th style="padding: 1rem; text-align: center;">Grade</th>
-                                        <th style="padding: 1rem; text-align: center;">Result</th>
+                                        <th class="p-3 text-start">Register Number</th>
+                                        <th class="p-3 text-start">Name</th>
+                                        <th class="p-3 text-center">Marks</th>
+                                        <th class="p-3 text-center">Grade</th>
+                                        <th class="p-3 text-center">Result</th>
                                     </tr>
                                 </thead>
                                 <tbody id="batchPreviewTableBody">
@@ -282,58 +320,80 @@
                 <h3>Add New Student</h3>
                 <button class="close-btn" onclick="closeAddStudentModal()">&times;</button>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label for="sname">Full Name</label>
-                    <input type="text" id="sname" placeholder="John Doe">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="sname">Full Name</label>
+                        <input type="text" id="sname" placeholder="John Doe">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="semail">Student Email</label>
-                    <input type="email" id="semail" placeholder="student@edu.com">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="semail">Student Email</label>
+                        <input type="email" id="semail" placeholder="student@edu.com">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="ssession">Register Number (Login ID)</label>
-                    <input type="text" id="ssession" placeholder="e.g. REG12345">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="ssession">Register Number (Login ID)</label>
+                        <input type="text" id="ssession" placeholder="e.g. REG12345">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="sgender">Gender</label>
-                    <select id="sgender" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="sgender">Gender</label>
+                        <select id="sgender" class="form-select" style="padding: 0.75rem 1rem;">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="sdob">DOB</label>
-                    <input type="date" id="sdob" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="sdob">DOB</label>
+                        <input type="date" id="sdob" class="form-control" style="padding: 0.75rem 1rem;">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="sbatch">Batch</label>
-                    <select id="sbatch" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
-                        <option value="Batch 1">Batch 1</option>
-                        <option value="Batch 2">Batch 2</option>
-                        <option value="Batch 3">Batch 3</option>
-                        <option value="Batch 4">Batch 4</option>
-                    </select>
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="sbatch">Batch</label>
+                        <select id="sbatch" class="form-select" style="padding: 0.75rem 1rem;">
+                            <option value="Batch 1">Batch 1</option>
+                            <option value="Batch 2">Batch 2</option>
+                            <option value="Batch 3">Batch 3</option>
+                            <option value="Batch 4">Batch 4</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="ssection">Section</label>
-                    <input type="text" id="ssection" placeholder="A">
+                <div class="col-12 col-md-4">
+                    <div class="form-group mb-0">
+                        <label for="ssection">Section</label>
+                        <input type="text" id="ssection" placeholder="A">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="sguardian">Guardian Name</label>
-                    <input type="text" id="sguardian" placeholder="KL Kumar">
+                <div class="col-12 col-md-8">
+                    <div class="form-group mb-0">
+                        <label for="sguardian">Guardian Name</label>
+                        <input type="text" id="sguardian" placeholder="KL Kumar">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="smobile">Guardian Mobile No</label>
-                    <input type="text" id="smobile" placeholder="+1 234 567 8900">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="smobile">Guardian Mobile No</label>
+                        <input type="text" id="smobile" placeholder="+1 234 567 8900">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="splace">Place</label>
-                    <input type="text" id="splace" placeholder="e.g. City Name">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="splace">Place</label>
+                        <input type="text" id="splace" placeholder="e.g. City Name">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="scampus">Campus Name</label>
-                    <input type="text" id="scampus" placeholder="Main Campus">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="scampus">Campus Name</label>
+                        <input type="text" id="scampus" placeholder="Main Campus">
+                    </div>
                 </div>
             </div>
             <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="addStudent()">Register a Student</button>
@@ -348,69 +408,95 @@
                 <button class="close-btn" onclick="closeEditModal()">&times;</button>
             </div>
             <input type="hidden" id="editOriginalName">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label for="editName">Full Name</label>
-                    <input type="text" id="editName">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editName">Full Name</label>
+                        <input type="text" id="editName">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editEmail">Student Email</label>
-                    <input type="email" id="editEmail">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editEmail">Student Email</label>
+                        <input type="email" id="editEmail">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editSession">Register Number</label>
-                    <input type="text" id="editSession">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editSession">Register Number</label>
+                        <input type="text" id="editSession">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editGender">Gender</label>
-                    <select id="editGender" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editGender">Gender</label>
+                        <select id="editGender" class="form-select" style="padding: 0.75rem 1rem;">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editDob">DOB</label>
-                    <input type="date" id="editDob" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editDob">DOB</label>
+                        <input type="date" id="editDob" class="form-control" style="padding: 0.75rem 1rem;">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editBatch">Batch</label>
-                    <select id="editBatch" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
-                        <option value="Batch 1">Batch 1</option>
-                        <option value="Batch 2">Batch 2</option>
-                        <option value="Batch 3">Batch 3</option>
-                        <option value="Batch 4">Batch 4</option>
-                    </select>
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editBatch">Batch</label>
+                        <select id="editBatch" class="form-select" style="padding: 0.75rem 1rem;">
+                            <option value="Batch 1">Batch 1</option>
+                            <option value="Batch 2">Batch 2</option>
+                            <option value="Batch 3">Batch 3</option>
+                            <option value="Batch 4">Batch 4</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editSection">Section</label>
-                    <input type="text" id="editSection">
+                <div class="col-12 col-md-4">
+                    <div class="form-group mb-0">
+                        <label for="editSection">Section</label>
+                        <input type="text" id="editSection">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editGuardian">Guardian Name</label>
-                    <input type="text" id="editGuardian">
+                <div class="col-12 col-md-8">
+                    <div class="form-group mb-0">
+                        <label for="editGuardian">Guardian Name</label>
+                        <input type="text" id="editGuardian">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editMobile">Guardian Mobile No</label>
-                    <input type="text" id="editMobile">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editMobile">Guardian Mobile No</label>
+                        <input type="text" id="editMobile">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editPlace">Place</label>
-                    <input type="text" id="editPlace">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editPlace">Place</label>
+                        <input type="text" id="editPlace">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editCampus">Campus Name</label>
-                    <input type="text" id="editCampus">
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editCampus">Campus Name</label>
+                        <input type="text" id="editCampus">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editStatus">Status</label>
-                    <select id="editStatus" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Inter';">
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
+                <div class="col-12 col-md-6">
+                    <div class="form-group mb-0">
+                        <label for="editStatus">Status</label>
+                        <select id="editStatus" class="form-select" style="padding: 0.75rem 1rem;">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editPassword">Login Password</label>
-                    <input type="text" id="editPassword" placeholder="Auto-generates from DOB">
+                <div class="col-12">
+                    <div class="form-group mb-0">
+                        <label for="editPassword">Login Password</label>
+                        <input type="text" id="editPassword" placeholder="Auto-generates from DOB">
+                    </div>
                 </div>
             </div>
             <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="saveStudentChanges()">Save Changes</button>
@@ -465,5 +551,7 @@
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

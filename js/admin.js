@@ -563,12 +563,30 @@ async function viewAcademicProfile(studentName) {
 
         if (detailsContainer && user) {
             detailsContainer.innerHTML = `
-                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Register Num</div><div style="font-weight:600;">${user.session || "N/A"}</div></div>
-                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Email</div><div style="font-weight:600;">${user.email || "N/A"}</div></div>
-                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile</div><div style="font-weight:600;">${user.mobile || "N/A"}</div></div>
-                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">DOB</div><div style="font-weight:600;">${user.dob || "N/A"}</div></div>
-                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Gender</div><div style="font-weight:600;">${user.gender || "N/A"}</div></div>
-                <div><div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Mapped Batch</div><div style="font-weight:600;">${user.batch || "N/A"}</div></div>
+                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Register Num</div>
+                    <div style="font-weight:600;">${user.session || "N/A"}</div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Email</div>
+                    <div style="font-weight:600;">${user.email || "N/A"}</div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile</div>
+                    <div style="font-weight:600;">${user.mobile || "N/A"}</div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">DOB</div>
+                    <div style="font-weight:600;">${user.dob || "N/A"}</div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Gender</div>
+                    <div style="font-weight:600;">${user.gender || "A"}</div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">Mapped Batch</div>
+                    <div style="font-weight:600;">${user.batch || "N/A"}</div>
+                </div>
             `;
             // Keep batch context for loading marks
             detailsContainer.dataset.batch = user.batch || "Batch 1";

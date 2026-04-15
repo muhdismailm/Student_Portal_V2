@@ -7,6 +7,7 @@ body {
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+    width: 100%;
 }
 
 /* Sidebar Styling */
@@ -17,6 +18,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -75,6 +77,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    min-width: 0; /* Important for horizontal scrolling tables */
 }
 
 .top-header {
@@ -83,9 +86,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
     box-shadow: var(--shadow-sm);
-    z-index: 5;
+    z-index: 1030; /* Above offcanvas backdrop if needed */
 }
 
 .user-profile {
@@ -108,8 +110,14 @@ body {
 }
 
 .content-wrapper {
-    padding: 2rem;
+    padding: 1rem;
     flex: 1;
+}
+
+@media (min-width: 768px) {
+    .content-wrapper {
+        padding: 2rem;
+    }
 }
 
 /* New Filters Area */
@@ -144,7 +152,8 @@ body {
 
 .top-search {
     position: relative;
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
 }
 
 .top-search svg {
@@ -168,7 +177,8 @@ body {
 
 .header-search {
     position: relative;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
 }
 
 .header-search input {
@@ -215,13 +225,21 @@ body {
 .modal-content {
     background: white;
     border-radius: 12px;
-    width: 100%;
+    width: 95%;
     max-width: 500px;
-    padding: 2rem;
+    padding: 1.5rem;
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.3s ease-out;
     max-height: 90vh;
     overflow-y: auto;
+    margin: auto;
+}
+
+@media (min-width: 576px) {
+    .modal-content {
+        padding: 2rem;
+        width: 100%;
+    }
 }
 
 .modal-header {
@@ -268,9 +286,20 @@ body {
 .card {
     background: white;
     border-radius: 12px;
-    padding: 2rem;
+    padding: 1.5rem;
     box-shadow: var(--shadow-sm);
-    max-width: 600px;
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .card {
+        padding: 2rem;
+        max-width: 600px;
+    }
+}
+
+.card.w-100 {
+    max-width: 100% !important;
 }
 
 @keyframes fadeIn {

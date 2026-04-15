@@ -5,22 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Institution Portal | Student</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="css/student.css">
     <style>
-        .profile-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
         .profile-item {
             background: #F8FAFC;
             padding: 1rem;
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            height: 100%;
         }
 
         .profile-label {
@@ -37,47 +33,23 @@
         }
 
         @media print {
-
-            .sidebar,
-            .top-header,
-            .print-hide {
-                display: none !important;
-            }
-
-            .dashboard-container {
-                display: flex;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 0;
-                width: 100%;
-                display: block;
-            }
-
-            body {
-                background: white;
-            }
-
-            .card {
-                box-shadow: none;
-                border: 1px solid #ccc;
-                padding: 0;
-            }
-
-            .content-wrapper {
-                padding: 0;
-            }
+            .sidebar, .top-header, .print-hide { display: none !important; }
+            .dashboard-container { display: flex; }
+            .main-content { margin-left: 0; padding: 0; width: 100%; display: block; }
+            body { background: white; }
+            .card { box-shadow: none; border: 1px solid #ccc; padding: 0; }
+            .content-wrapper { padding: 0; }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="dashboard-container">
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container p-0">
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
+        <!-- Sidebar - Desktop (xl and up) -->
+        <aside class="sidebar d-none d-xl-flex print-hide">
             <div class="sidebar-header">
                 <h3>EduPulse<span style="color: var(--primary-green);">.</span></h3>
             </div>
@@ -95,22 +67,54 @@
             </nav>
 
             <div class="sidebar-footer">
-                <button class="nav-item" style="color: #EF4444;" onclick="logout()">
+                <button class="nav-item m-0" style="color: #EF4444;" onclick="logout()">
                     Log Out
                 </button>
             </div>
         </aside>
 
+        <!-- Offcanvas Sidebar - Mobile/Tablet (below xl) -->
+        <div class="offcanvas offcanvas-start print-hide" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+            <div class="offcanvas-header sidebar-header border-bottom">
+                <h3 class="offcanvas-title" id="mobileSidebarLabel">EduPulse<span style="color: var(--primary-green);">.</span></h3>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0 d-flex flex-column">
+                <nav class="sidebar-nav p-3 flex-grow-1">
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('dashboardSection', this); loadDashboardData();">
+                        Dashboard
+                    </button>
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('resultsSection', this); loadResultsData();">
+                        Results
+                    </button>
+                    <button class="nav-item mb-2" data-bs-dismiss="offcanvas" onclick="showSection('profileUpdateSection', this); loadProfileUpdateData();">
+                        Profile Update
+                    </button>
+                </nav>
+                <div class="sidebar-footer p-3 border-top mt-auto">
+                    <button class="nav-item m-0" style="color: #EF4444;" onclick="logout()">
+                        Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <main class="main-content">
 
-            <header class="top-header print-hide">
-                <div class="header-search">
-                    <span id="welcomeGreeting" style="font-weight: 600; font-size: 1.125rem;">Student Portal</span>
+            <header class="top-header print-hide bg-white shadow-sm sticky-top px-3 px-md-4">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Mobile Menu Toggle -->
+                    <button class="btn d-xl-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div class="header-search">
+                        <span id="welcomeGreeting" class="fw-bold d-none d-sm-inline">Student Portal</span>
+                    </div>
                 </div>
-                <div class="user-profile">
-                    <span id="headerStudentName">Student</span>
-                    <div class="avatar" id="avatarLet">S</div>
+                <div class="user-profile d-flex align-items-center gap-2">
+                    <span id="headerStudentName" class="d-none d-sm-inline">Student</span>
+                    <div class="avatar bg-primary text-white" id="avatarLet">S</div>
                 </div>
             </header>
 
@@ -132,42 +136,60 @@
                                 Yearly Grade Card</button>
                         </div>
 
-                        <div class="profile-grid">
-                            <div class="profile-item">
-                                <div class="profile-label">Student Name</div>
-                                <div class="profile-value" id="dispName">N/A</div>
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Student Name</div>
+                                    <div class="profile-value" id="dispName">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Class Enrolled</div>
-                                <div class="profile-value" id="dispClass">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Class Enrolled</div>
+                                    <div class="profile-value" id="dispClass">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Section</div>
-                                <div class="profile-value" id="dispSection">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Section</div>
+                                    <div class="profile-value" id="dispSection">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Register Number</div>
-                                <div class="profile-value" id="dispSession">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Register Number</div>
+                                    <div class="profile-value" id="dispSession">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Gender</div>
-                                <div class="profile-value" id="dispGender">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Gender</div>
+                                    <div class="profile-value" id="dispGender">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Date of Birth</div>
-                                <div class="profile-value" id="dispDob">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Date of Birth</div>
+                                    <div class="profile-value" id="dispDob">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Student Email</div>
-                                <div class="profile-value" id="dispEmail">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Student Email</div>
+                                    <div class="profile-value" id="dispEmail">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Mobile Subscribed</div>
-                                <div class="profile-value" id="dispMobile">N/A</div>
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Mobile Subscribed</div>
+                                    <div class="profile-value" id="dispMobile">N/A</div>
+                                </div>
                             </div>
-                            <div class="profile-item" style="grid-column: 1 / -1;">
-                                <div class="profile-label">Guardian Name</div>
-                                <div class="profile-value" id="dispGuardian">N/A</div>
+                            <div class="col-12">
+                                <div class="profile-item shadow-sm">
+                                    <div class="profile-label">Guardian Name</div>
+                                    <div class="profile-value" id="dispGuardian">N/A</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -193,22 +215,30 @@
                             <p style="color: var(--text-muted); margin-top: 0.25rem;">Consolidated Statement of Results</p>
                         </div>
 
-                        <div class="info-grid">
-                            <div class="info-box">
-                                <div class="info-label">Student Name</div>
-                                <div class="info-value" id="resName">N/A</div>
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="info-box shadow-sm">
+                                    <div class="info-label">Student Name</div>
+                                    <div class="info-value text-break" id="resName">N/A</div>
+                                </div>
                             </div>
-                            <div class="info-box">
-                                <div class="info-label">Register Number</div>
-                                <div class="info-value" id="resRegNo">N/A</div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="info-box shadow-sm">
+                                    <div class="info-label">Register Number</div>
+                                    <div class="info-value" id="resRegNo">N/A</div>
+                                </div>
                             </div>
-                            <div class="info-box">
-                                <div class="info-label">Place</div>
-                                <div class="info-value" id="resPlace">N/A</div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="info-box shadow-sm">
+                                    <div class="info-label">Place</div>
+                                    <div class="info-value" id="resPlace">N/A</div>
+                                </div>
                             </div>
-                            <div class="info-box">
-                                <div class="info-label">Campus Name</div>
-                                <div class="info-value" id="resCampus">N/A</div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="info-box shadow-sm">
+                                    <div class="info-label">Campus Name</div>
+                                    <div class="info-value" id="resCampus">N/A</div>
+                                </div>
                             </div>
                         </div>
 
@@ -278,6 +308,8 @@
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/student.js"></script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
