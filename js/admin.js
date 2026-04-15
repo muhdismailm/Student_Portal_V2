@@ -1,3 +1,6 @@
+let allStudentsData = [];
+let allAcademicData = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     // Basic protection
     let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
@@ -14,6 +17,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateDashboardStats();
     loadStudents();
+
+    // Search functionality
+    const dashboardSearch = document.getElementById("dashboardSearch");
+    if (dashboardSearch) {
+        dashboardSearch.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allStudentsData.filter(s => 
+                (s.name && s.name.toLowerCase().includes(query)) || 
+                (s.session && s.session.toLowerCase().includes(query))
+            );
+            renderStudentsTable(filtered);
+        });
+    }
+
+    const academicSearch = document.getElementById("academicSearch");
+    if (academicSearch) {
+        academicSearch.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allAcademicData.filter(s => 
+                (s.name && s.name.toLowerCase().includes(query)) || 
+                (s.batch && s.batch.toLowerCase().includes(query))
+            );
+            renderAcademicProfilesTable(filtered);
+        });
+    }
 });
 
 async function updateDashboardStats() {
@@ -295,9 +323,6 @@ async function clearAllMarks() {
 
 // Setup Manage Students Feature
 async function loadStudents() {
-    let tBody = document.getElementById("studentsTableBody");
-    if (!tBody) return;
-
     try {
         const { data: students, error } = await window.sb
             .from('profiles')
@@ -307,35 +332,43 @@ async function loadStudents() {
 
         if (error) throw error;
 
-        tBody.innerHTML = "";
-
-        students.forEach((s, index) => {
-            let isInactive = s.status === 'Inactive';
-            let statusBadge = isInactive ? '<span class="badge" style="background:#FEE2E2;color:#DC2626;">Inactive</span>' : '<span class="badge badge-green">Active</span>';
-            
-            let row = `<tr>
-                <td style="font-weight: 500;">${index + 1}</td>
-                <td style="font-weight: 500; color: var(--text-main);">${s.name || "N/A"}</td>
-                <td>${s.session || "N/A"}</td>
-                <td>${s.gender || "Male"}</td>
-                <td>${s.dob || "N/A"}</td>
-                <td>${s.batch || "N/A"}</td>
-                <td>${s.section || "N/A"}</td>
-                <td>${s.guardian || "N/A"}</td>
-                <td>${s.email}</td>
-                <td>${s.mobile || "N/A"}</td>
-                <td>${statusBadge}</td>
-                <td style="white-space: nowrap;">
-                    <button class="btn-icon" title="View" onclick="viewAcademicProfile('${s.name}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                    <button class="btn-icon" title="Delete" onclick="deleteStudent('${s.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-                    <button class="btn-icon" title="Edit" onclick="editStudent('${s.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button>
-                </td>
-            </tr>`;
-            tBody.innerHTML += row;
-        });
+        allStudentsData = students || [];
+        renderStudentsTable(allStudentsData);
     } catch (err) {
         console.error("Load Students Error:", err);
     }
+}
+
+function renderStudentsTable(students) {
+    let tBody = document.getElementById("studentsTableBody");
+    if (!tBody) return;
+
+    tBody.innerHTML = "";
+
+    students.forEach((s, index) => {
+        let isInactive = s.status === 'Inactive';
+        let statusBadge = isInactive ? '<span class="badge" style="background:#FEE2E2;color:#DC2626;">Inactive</span>' : '<span class="badge badge-green">Active</span>';
+        
+        let row = `<tr>
+            <td style="font-weight: 500;">${index + 1}</td>
+            <td style="font-weight: 500; color: var(--text-main);">${s.name || "N/A"}</td>
+            <td>${s.session || "N/A"}</td>
+            <td>${s.gender || "Male"}</td>
+            <td>${s.dob || "N/A"}</td>
+            <td>${s.batch || "N/A"}</td>
+            <td>${s.section || "N/A"}</td>
+            <td>${s.guardian || "N/A"}</td>
+            <td>${s.email}</td>
+            <td>${s.mobile || "N/A"}</td>
+            <td>${statusBadge}</td>
+            <td style="white-space: nowrap;">
+                <button class="btn-icon" title="View" onclick="viewAcademicProfile('${s.name}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                <button class="btn-icon" title="Delete" onclick="deleteStudent('${s.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                <button class="btn-icon" title="Edit" onclick="editStudent('${s.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button>
+            </td>
+        </tr>`;
+        tBody.innerHTML += row;
+    });
 }
 
 async function editStudent(studentId) {
@@ -475,24 +508,29 @@ async function loadStudentProfilesList() {
 
         if (error) throw error;
 
-        let tbody = document.getElementById("profilesListBody");
-        if (!tbody) return;
-
-        tbody.innerHTML = "";
-        students.forEach((s, i) => {
-            let row = `<tr>
-                <td style="font-weight: 500;">${i + 1}</td>
-                <td style="font-weight: 500; color: var(--text-main);">${s.name}</td>
-                <td>${s.batch || "Not Assigned"}</td>
-                <td>
-                    <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="viewAcademicProfile('${s.name}')">View Details</button>
-                </td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
+        allAcademicData = students || [];
+        renderAcademicProfilesTable(allAcademicData);
     } catch (err) {
         console.error("Profiles List Error:", err);
     }
+}
+
+function renderAcademicProfilesTable(students) {
+    let tbody = document.getElementById("profilesListBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    students.forEach((s, i) => {
+        let row = `<tr>
+            <td style="font-weight: 500;">${i + 1}</td>
+            <td style="font-weight: 500; color: var(--text-main);">${s.name}</td>
+            <td>${s.batch || "Not Assigned"}</td>
+            <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="viewAcademicProfile('${s.name}')">View Details</button>
+            </td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
 }
 
 function goBackToProfiles() {
@@ -807,3 +845,94 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
 });
+
+function openDownloadModal() {
+    document.getElementById("downloadModalOverlay").classList.add("active");
+}
+
+function closeDownloadModal() {
+    document.getElementById("downloadModalOverlay").classList.remove("active");
+}
+
+async function generateCustomReport() {
+    try {
+        // 1. Check selected options
+        const includeName = document.getElementById("col-name").checked;
+        const includeReg = document.getElementById("col-reg").checked;
+        const includeBatch = document.getElementById("col-batch").checked;
+        const includeDob = document.getElementById("col-dob").checked;
+        const includeGuardian = document.getElementById("col-guardian").checked;
+        const includeMobile = document.getElementById("col-mobile").checked;
+        const includeMark = document.getElementById("col-mark").checked;
+        const includeResult = document.getElementById("col-result").checked;
+
+        if (!includeName && !includeReg && !includeBatch && !includeDob && !includeGuardian && !includeMobile && !includeMark && !includeResult) {
+            if(typeof showToast === 'function') showToast("Please select at least one field.", "error");
+            return;
+        }
+
+        // 2. Fetch all academic results to map marks/status
+        const { data: results, error: resError } = await window.sb
+            .from('academic_results')
+            .select('*');
+
+        if (resError) throw resError;
+
+        // 3. Prepare Header
+        let headers = [];
+        if (includeName) headers.push("Student Name");
+        if (includeReg) headers.push("Register Number");
+        if (includeBatch) headers.push("Batch");
+        if (includeDob) headers.push("DOB");
+        if (includeGuardian) headers.push("Guardian Name");
+        if (includeMobile) headers.push("Guardian Number");
+        if (includeMark) headers.push("Obtained Mark");
+        if (includeResult) headers.push("Result");
+
+        let csvContent = headers.join(",") + "\n";
+
+        // 4. Build Rows
+        allStudentsData.forEach(s => {
+            let row = [];
+            let res = results.find(r => r.register_number === s.session || r.student_name === s.name);
+            
+            if (includeName) row.push(`"${s.name || 'N/A'}"`);
+            if (includeReg) row.push(`"${s.session || 'N/A'}"`);
+            if (includeBatch) row.push(`"${s.batch || 'N/A'}"`);
+            if (includeDob) row.push(`"${s.dob || 'N/A'}"`);
+            if (includeGuardian) row.push(`"${s.guardian || 'N/A'}"`);
+            if (includeMobile) row.push(`"${s.mobile || 'N/A'}"`);
+            
+            if (includeMark) {
+                row.push(`"${res ? res.marks : '0'}"`);
+            }
+            if (includeResult) {
+                if (res) {
+                    let isPass = (parseFloat(res.marks) || 0) >= (parseFloat(res.pass_mark) || 0);
+                    row.push(`"${isPass ? 'PASS' : 'FAIL'}"`);
+                } else {
+                    row.push(`"N/A"`);
+                }
+            }
+            csvContent += row.join(",") + "\n";
+        });
+
+        // 5. Trigger Download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Student_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        closeDownloadModal();
+        if(typeof showToast === 'function') showToast("Report downloaded successfully!", "success");
+
+    } catch (err) {
+        console.error("Download Error:", err);
+        if(typeof showToast === 'function') showToast("Error generating report.", "error");
+    }
+}

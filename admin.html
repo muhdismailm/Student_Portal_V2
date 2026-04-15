@@ -43,10 +43,7 @@
         <main class="main-content">
             
             <header class="top-header print-hide">
-                <div class="header-search">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" placeholder="Search">
-                </div>
+
                 <div class="user-profile">
                     <span id="adminName">Administrator</span>
                     <div class="avatar">A</div>
@@ -65,11 +62,11 @@
                         <div class="filter-row" style="justify-content: space-between;">
                             <div class="top-search">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                <input type="text" placeholder="Search">
+                                <input type="text" id="dashboardSearch" placeholder="Search by name or reg number">
                             </div>
                             
                             <div style="display: flex; gap: 1rem;">
-                                <button class="btn btn-light">Download Report</button>
+                                <button class="btn btn-light" id="downloadReportBtn" onclick="openDownloadModal()">Download Report</button>
                                 <button class="btn btn-yellow" onclick="openAddStudentModal()">+ Add Student</button>
                             </div>
                         </div>
@@ -108,6 +105,11 @@
                         <div class="section-header">
                             <h2>Academic Profiles</h2>
                             <p>Select a student to edit class assignments and academic marks.</p>
+                        </div>
+
+                        <div class="top-search" style="margin-bottom: 1.5rem; width: 100%; max-width: 400px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="academicSearch" placeholder="Search student name or batch...">
                         </div>
                         <div class="card" style="max-width: 100%;">
                             <div class="table-container" style="margin-top: 0; box-shadow: none; border: 1px solid var(--border-color); border-radius: 8px;">
@@ -412,6 +414,46 @@
                 </div>
             </div>
             <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="saveStudentChanges()">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Download Report Modal -->
+    <div class="modal-overlay" id="downloadModalOverlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>Custom Download</h3>
+                <button class="close-btn" onclick="closeDownloadModal()">&times;</button>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Select the fields you want to include in the report:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-name" checked> Student Name
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-reg" checked> Register Number
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-batch" checked> Batch
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-dob"> Date of Birth
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-guardian"> Guardian Name
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-mobile"> Guardian Number
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-mark"> Obtained Mark
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="col-result"> Result (Pass/Fail)
+                </label>
+            </div>
+            
+            <button class="btn btn-primary btn-block" onclick="generateCustomReport()">Download CSV Report</button>
         </div>
     </div>
 
