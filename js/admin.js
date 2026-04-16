@@ -614,7 +614,7 @@ async function loadAcademicBatchData() {
 
         if (error) throw error;
         
-        let container = document.getElementById("academicMarksTableBody");
+        let container = document.getElementById("academicMarksContainer");
         container.innerHTML = "";
         
         if (!studentResults || studentResults.length === 0) {
@@ -630,28 +630,33 @@ async function loadAcademicBatchData() {
 }
 
 function addAcademicSubjectRow(subject = "Final Result", passMark = "", marks = "", grade = "") {
-    let tbody = document.getElementById("academicMarksTableBody");
-    let row = document.createElement("tr");
+    let container = document.getElementById("academicMarksContainer");
+    let row = document.createElement("div");
     row.className = "subject-row";
 
     row.innerHTML = `
-        <td>
-            <input type="text" class="sub-name" placeholder="Subject Name" value="${subject}" readonly style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter'; background: #f8fafc;">
-        </td>
-        <td>
-            <input type="number" class="sub-pass" placeholder="Pass Mark" value="${passMark}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </td>
-        <td>
-            <input type="number" class="sub-marks" placeholder="Marks" value="${marks}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </td>
-        <td>
-            <input type="text" class="sub-grade" placeholder="Grade" value="${grade}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter';">
-        </td>
-        <td style="text-align: center;">
-            <button class="btn" style="background:#EF4444; color:white; padding: 0.5rem; font-size: 0.75rem; width: 100%;" onclick="deleteIndividualResult()">Delete</button>
-        </td>
+        <div class="form-group">
+            <label>Label</label>
+            <input type="text" class="sub-name" value="${subject}" readonly style="background: #f8fafc;">
+        </div>
+        <div class="form-group">
+            <label>Pass Mark</label>
+            <input type="number" class="sub-pass" placeholder="Pass Mark" value="${passMark}">
+        </div>
+        <div class="form-group">
+            <label>Obtained</label>
+            <input type="number" class="sub-marks" placeholder="Marks" value="${marks}">
+        </div>
+        <div class="form-group">
+            <label>Grade</label>
+            <input type="text" class="sub-grade" placeholder="Grade" value="${grade}">
+        </div>
+        <div class="form-group" style="flex: 0 0 100px;">
+            <label>&nbsp;</label>
+            <button class="btn btn-block" style="background:#EF4444; color:white;" onclick="deleteIndividualResult()">Delete</button>
+        </div>
     `;
-    tbody.appendChild(row);
+    container.appendChild(row);
 }
 
 async function deleteIndividualResult() {
@@ -775,7 +780,7 @@ async function saveAcademicProfile() {
     let registerNumber = detailsContainer.dataset.session || "";
 
     // Harvest new mapped marks
-    let rows = document.querySelectorAll("#academicMarksTableBody .subject-row");
+    let rows = document.querySelectorAll("#academicMarksContainer .subject-row");
     let hasError = false;
     let recordsToSave = [];
 
