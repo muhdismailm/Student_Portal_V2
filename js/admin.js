@@ -202,22 +202,21 @@ function addSubjectRow() {
     
     let row = document.createElement("div");
     row.className = "subject-row";
-    row.style.cssText = "display: flex; gap: 1rem; align-items: end; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);";
     row.innerHTML = `
-        <div class="form-group" style="flex: 2; margin-bottom: 0;">
-            <label style="font-size: 0.75rem;">Result Label</label>
+        <div class="form-group">
+            <label>Result Label</label>
             <input type="text" class="sub-name" value="Final Result" readonly style="background: #f8fafc;">
         </div>
-        <div class="form-group" style="flex: 1; margin-bottom: 0;">
-            <label style="font-size: 0.75rem;">Pass Mark</label>
+        <div class="form-group">
+            <label>Pass Mark</label>
             <input type="number" class="sub-pass" placeholder="35">
         </div>
-        <div class="form-group" style="flex: 1; margin-bottom: 0;">
-            <label style="font-size: 0.75rem;">Obtained</label>
+        <div class="form-group">
+            <label>Obtained</label>
             <input type="number" class="sub-marks" placeholder="85">
         </div>
-        <div class="form-group" style="flex: 1; margin-bottom: 0;">
-            <label style="font-size: 0.75rem;">Grade</label>
+        <div class="form-group">
+            <label>Grade</label>
             <input type="text" class="sub-grade" placeholder="A">
         </div>
     `;
