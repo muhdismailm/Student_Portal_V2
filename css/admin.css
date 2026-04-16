@@ -212,7 +212,7 @@ body {
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    z-index: 1000;
+    z-index: 2000 !important;
     display: none;
     align-items: center;
     justify-content: center;
@@ -226,7 +226,7 @@ body {
     background: white;
     border-radius: 12px;
     width: 95%;
-    max-width: 500px;
+    max-width: 500px !important;
     padding: 1.5rem;
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.3s ease-out;
@@ -239,6 +239,13 @@ body {
     .modal-content {
         padding: 2rem;
         width: 100%;
+        max-width: 750px !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .modal-content {
+        max-width: 900px !important;
     }
 }
 
