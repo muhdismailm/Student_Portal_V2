@@ -4,5 +4,12 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Export/Expose the client globally for our modular frontend
+// Export/Expose the client globally
 window.sb = _supabase;
+
+// Quick check to ensure client is ready
+if (!window.sb) {
+    console.error("Supabase client failed to initialize. Check your URL and Key in js/supabase-config.js");
+} else {
+    console.log("Supabase initialized successfully.");
+}

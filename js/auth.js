@@ -28,7 +28,7 @@ async function login() {
         const { data: users, error } = await window.sb
             .from('profiles')
             .select('*')
-            .or(`email.eq.${loginId},session.eq.${loginId}`) // checks both email and register number fields
+            .or(`email.eq."${loginId}",session.eq."${loginId}"`) // quoted values for safety
             .eq('password', password);
 
         if (error) throw error;
@@ -55,8 +55,10 @@ async function login() {
         }, 800);
 
     } catch (err) {
-        console.error("Login Error:", err);
-        if(typeof showToast === 'function') showToast("Connection error. Please check Supabase setup.", "error");
+        console.error("Detailed Login Error:", err);
+        let errorMsg = "Connection error. Please check Supabase setup.";
+        if (err.message) errorMsg += " (" + err.message + ")";
+        if(typeof showToast === 'function') showToast(errorMsg, "error");
     }
 }
 
